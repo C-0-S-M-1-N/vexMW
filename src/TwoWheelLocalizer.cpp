@@ -32,11 +32,14 @@ Pose2D TwoWheelLocalizer::getEstimatedPose(DistanceUnits d, AngleUnits a){
 
 void TwoWheelLocalizer::update(){
 	Pose2D currentPos = this->getEstimatedPose();
-	double dR = getAngle(CAU) - currentPos.h;
+	double dR = getAngle(CAU);
+	double dy = getDY(CDU) - VexLib::convertDistance(parallelWheelPos.distUnit, CDU, parallelWheelPos.y) * (getAngle(CAU) - currentPos.h);
+
+	double dx = getDX(CDU) - VexLib::convertDistance(perpendicularWheelPos.distUnit, CDU, perpendicularWheelPos.x) * (getAngle(CAU) - currentPos.h);
 	Pose2D rotPos = Pose2D(
-			getDX(CDU) * VexLib::cos(dR) - getDY(CDU) * VexLib::sin(dR),
-			getDX(CDU) * VexLib::sin(dR) + getDY(CDU) * VexLib::cos(dR),
-			dR,
+			dx * VexLib::cos(dR) - dy * VexLib::sin(dR),
+			dx * VexLib::sin(dR) + dy * VexLib::cos(dR),
+			dR - currentPos.h,
 			CDU,
 			CAU
 	);

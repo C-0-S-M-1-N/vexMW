@@ -18,8 +18,8 @@ void TankDrive::drive(float fwd, float rot){
 
 }
 
-void TankDrive::lockRotation(vex::angleUnits u, float angle){
-    if(u == vex::angleUnits::NaA){
+void TankDrive::lockRotation(VexLib::AngleUnits u, float angle, bool lock){
+    if(!lock){
         setLockRotation(false);
         return;
     }

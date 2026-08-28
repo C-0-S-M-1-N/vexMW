@@ -1,20 +1,17 @@
 #ifndef TankDrive_h
 #define TankDrive_h
 #include "vex.h"
+#include "PID.hpp"
+#include "Units.hpp"
+#include "Localizer.hpp"
 
+extern VexLib::Localizer* localizer;
 
+class TankDrive {
+    /* Autonomous parameters */
+    VexLib::PIDFController HeadingController;
 
-namespace vex{
-
-enum class angleUnits{
-    deg,
-    rad,
-    NaA
-};
-
-}
-
-class TankDrive{
+    /* Driver controlled params*/
     vex::motor_group left, right; 
     float angleLock = 0;
     bool FLAGS = 0;
@@ -25,14 +22,12 @@ class TankDrive{
     inline bool isRunningPath() { return FLAGS & 0b10; }
     inline void setRunPath(bool set) { set ? FLAGS |= 0x02 : FLAGS &= 0xFD; }
 
-    
-
 public:
     TankDrive(const vex::motor_group& LEFT_SIDE_MOTORS, const vex::motor_group& RIGHT_SIDE_MOTORS):
     left{LEFT_SIDE_MOTORS}, right{RIGHT_SIDE_MOTORS}{}
 
     void drive(float forward, float rotate);
-    void lockRotation(vex::angleUnits, float);
+    void lockRotation(VexLib::AngleUnits, float, bool lock = true);
 
 };
 

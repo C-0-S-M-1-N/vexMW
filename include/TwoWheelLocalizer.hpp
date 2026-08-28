@@ -7,7 +7,7 @@
 
 namespace VexLib{
 
-class TwoWheelLocalizer: Localizer {
+class TwoWheelLocalizer: public Localizer {
 	Pose2D parallelWheelPos, perpendicularWheelPos;
 	std::function<double(AngleUnits)> getAngle;	
 	std::function<double(DistanceUnits)> getDX;
