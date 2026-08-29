@@ -30,6 +30,7 @@ public:
 	Localizer() = default;
 	virtual Pose2D getEstimatedPose(DistanceUnits = mm, AngleUnits = rad) = 0; // pure virtual, we want the user to define its own localizer
 	virtual Pose2D getEstimatedVelocity(DistanceUnits = mm, TimeUnits = s, AngleUnits = rad);
+	virtual void update(){}
 	
 	/* 
 	 * @breif sets the estimated position to (x=0, y=0, h=0) and restarts tracking
@@ -41,6 +42,7 @@ public:
 	 * @brief updates the current position to pose
 	 * */
 	void setPosition(const Pose2D& pose);
+	virtual void operator ()() = 0;
 
 };
 

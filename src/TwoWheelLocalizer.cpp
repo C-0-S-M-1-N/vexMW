@@ -7,14 +7,14 @@ namespace VexLib{
 	
 TwoWheelLocalizer::TwoWheelLocalizer(const Pose2D& paralelWheelPosition, 
 					  const Pose2D& perpendicularWheelPosition, 
-					  std::function<double(AngleUnits)> getAngle,
-					  std::function<double(DistanceUnits)> getDX,
-					  std::function<double(DistanceUnits)> getDY):
+					  std::function<double(AngleUnits)> getangle,
+					  std::function<double(DistanceUnits)> getdX,
+					  std::function<double(DistanceUnits)> getdY):
 		parallelWheelPos{paralelWheelPosition},
 		perpendicularWheelPos{perpendicularWheelPosition},
-		getAngle{getAngle},
-		getDX{getDX},
-		getDY{getDY}{}
+		getAngle{std::move(getangle)},
+		getDX{std::move(getdX)},
+		getDY{std::move(getdY)}{}
 
 
 Pose2D TwoWheelLocalizer::getEstimatedPose(DistanceUnits d, AngleUnits a){
@@ -33,7 +33,7 @@ Pose2D TwoWheelLocalizer::getEstimatedPose(DistanceUnits d, AngleUnits a){
 void TwoWheelLocalizer::update(){
 	Pose2D currentPos = this->getEstimatedPose();
 	double dR = getAngle(CAU);
-	double dy = getDY(CDU) - VexLib::convertDistance(parallelWheelPos.distUnit, CDU, parallelWheelPos.y) * (getAngle(CAU) - currentPos.h);
+	double dy = getDY(CDU) - VexLib::convertDistance(parallelWheelPos.distUnit, CDU, parallelWheelPos.x) * (getAngle(CAU) - currentPos.h);
 
 	double dx = getDX(CDU) - VexLib::convertDistance(perpendicularWheelPos.distUnit, CDU, perpendicularWheelPos.x) * (getAngle(CAU) - currentPos.h);
 	Pose2D rotPos = Pose2D(

@@ -31,6 +31,18 @@ endif
 ifeq ("$(origin T)", "command line")
 VEX_SDK_PATH = $(T)
 endif
+
+
+# hack to make this work without vscode button pressing on linux
+ifneq ($(OS), Windows_NT)
+	ifeq ("${T}", "")
+	export PATH := ${HOME}/.config/Code/User/globalStorage/vexrobotics.vexcode/tools/cpp/toolchain_linux64/gcc/bin:$(PATH)
+	VEX_SDK_PATH = ${HOME}/.config/Code/User/globalStorage/vexrobotics.vexcode/sdk/cpp/V5/V5_20240802_15_00_00
+	endif
+
+endif
+
+
 # backup if still not set
 VEX_SDK_PATH ?= ${HOME}/.config/Code/User/globalStorage/vexrobotics.vexcode/sdk/cpp/V5/V5_20240802_15_00_00
 
@@ -58,15 +70,13 @@ else
 Q =
 endif
 
-ROOTFILES := /home/cosmin/.config/Code/User/globalStorage/vexrobotics.vexcode/tools/cpp/toolchain_linux64/gcc/bin
-
 # compile and link tools
 CC      = clang
 CXX     = clang
-OBJCOPY = $(ROOTFILES)/arm-none-eabi-objcopy
-SIZE    = $(ROOTFILES)/arm-none-eabi-size
-LINK    = $(ROOTFILES)/arm-none-eabi-ld
-ARCH    = $(ROOTFILES)/arm-none-eabi-ar
+OBJCOPY = arm-none-eabi-objcopy
+SIZE    = arm-none-eabi-size
+LINK    = arm-none-eabi-ld
+ARCH    = arm-none-eabi-ar
 ECHO    = @echo
 DEFINES = -DVexV5
 

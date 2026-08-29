@@ -4,7 +4,7 @@
 #include "vex.h"
 #include "VexLib.hpp"
 #include "vex_global.h"
-#include "vex_imu.h"
+#include "vex_thread.h"
 #include "vex_triport.h"
 #include "vex_units.h"
 #include <memory>
@@ -26,6 +26,7 @@ double getElapsedTime(VexLib::TimeUnits unit){
     return VexLib::convertTime(VexLib::TimeUnits::us, unit, timeuS);
 }
 
+// localizer init example
 void initLocalizer(){
 	std::shared_ptr<vex::encoder> 
 		parallelEnc = std::make_shared<vex::encoder>(Brain.ThreeWirePort.PARALLEL_ENCODER_PORT),
@@ -50,10 +51,13 @@ void initLocalizer(){
 		return ret;
 	}
 );
+
 }
 
 int main(){
-	
+	initLocalizer();
+	vex::thread localizerUpdate([]() -> void { localizer->update(); });
+
     while(1){
 
     }
