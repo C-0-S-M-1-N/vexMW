@@ -4,6 +4,18 @@
 
 namespace VexLib{
 
+inline double Pose2D::getX(VexLib::DistanceUnits d){
+	return VexLib::convertDistance(distUnit, d, x);
+}
+
+inline double Pose2D::getY(VexLib::DistanceUnits d){
+	return VexLib::convertDistance(distUnit, d, y);
+}
+
+inline double Pose2D::getH(VexLib::AngleUnits a){
+	return VexLib::convertAngles(angleUnits, a, h);
+}
+
 Pose2D operator -(const Pose2D& a, const Pose2D& b){
 	return Pose2D (
 		a.x - convertDistance(b.distUnit, a.distUnit, b.x),

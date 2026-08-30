@@ -14,6 +14,9 @@ typedef struct Pose2D {
            DistanceUnits distUnit = DistanceUnits::mm, 
            AngleUnits angleUnits = AngleUnits::rad)
         : x(x), y(y), h(h), distUnit(distUnit), angleUnits(angleUnits) {}
+	double getX(VexLib::DistanceUnits);
+	double getY(VexLib::DistanceUnits);
+	double getH(VexLib::AngleUnits);
 } Pose2D ;
 
 Pose2D operator -(const Pose2D&, const Pose2D&);
