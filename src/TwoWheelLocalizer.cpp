@@ -56,6 +56,7 @@ void TwoWheelLocalizer::update(){
 	} else {
 		// 2nd order estimation (asume constant velocity on both movement and spin)
 		
+
 		double cosIntegral = sin(heading) - sin(currentPos.getH(VexLib::AngleUnits::rad));
 		double sinIntegral = cos(currentPos.getH(VexLib::AngleUnits::rad)) - cos(heading);
 
@@ -75,3 +76,62 @@ void TwoWheelLocalizer::update(){
 
 
 }; // namespace VexLib
+ 
+/*
+ * Implementation details:
+ *
+ * * * * * linear estimation: * * * * *
+ *
+ * start from adding to the current position the velocity that the robot is heading:
+ *
+ * x += dV_x * dt (= dx);
+ * y += dV_y * dt (= dy);
+ *
+ * now we need to compute the velocities
+ *
+ * dV_x = dx / dt = velocity from the forward dead wheel encoder rotated at the current robot angle (so that we change the reference frame from robot-centric to field-centric)
+ *
+ * dx / dt = dFwd / dt * cos(heading) - dLat / dt * sin(heading)
+ * (analog for dy)
+ * dy / dt = dFwd / dt * sin(heading) + dLat / dt * sin(heading)
+ * 
+ * (matrix form)
+ * (dx / dt) = (dFwd / dt) (cos(heading)  -sin(heading))
+ * (dy / dt)   (dLat / dt) (sin(heading)   cos(heading))
+ *
+ * now just multiply everything by dt and we get the linear aproximation dx, dy
+ *
+ *
+ * * * * * constant velocity arc based estimation: * * * * *
+ *
+ * assume that the robot spins and moves with constant velocities (and for small periods of time (ie ~0.5ms) it aproximates quite good!)
+ * constinueing from where we left on linear estimation without multiplying bt dt (since we dont know dt as it can be any arbitrary value)
+ *
+ * (note: dVar is the change of Var in one loop-time)
+ *
+ * (dx / dt) (t) = (dFwd / dt) (cos(dH/dt * t + heading)  -sin(dH/dt * t + heading))
+ * (dy / dt)       (dLat / dt) (sin(dH/dt * t + heading)   cos(dH/dt * t + heading))
+ *
+ * to get dx and dy we will integrate from 0 to T in order to get the current distances that the bot made since last looptime (remember that everything is in reference to the last frame)
+ *
+ * dx(dt) = dFwd / dt * dt / dH * (sin(dH/dt * t + heading) - cos(dH / dt * t + heading)) from 0 to dt
+ * dx(dt) = dFwd / dH * (sin(dH/dt * dt + heading) - sin(heading) - cos(dH / dt * dt + heading) + cos(heading))
+ * analog for dy
+ *
+ * * * * * higher order estimations * * * * *
+ *
+ * as we assumed constant velocity we can also assume constant acceleration, jerk, snap, crackle, pop, ...
+ * the ideea is the same
+ *
+ * Fwd(t) = pop * t^6 + crackle*t^5 + snap * t^4 + jerk * t^3 + acceleration * t^2 + velocity * t + 0
+ * Lat(t) = pop * t^6 + crackle*t^5 + snap * t^4 + jerk * t^3 + acceleration * t^2 + velocity * t + 0
+ * H(t) = pop * t^6 + crackle*t^5 + snap * t^4 + jerk * t^3 + acceleration * t^2 + velocity * t + 0
+ *
+ * dx(t) / dt = dFwd(t) / dt * cos(H(t)) + dLat(t) / dt * sin(H(t))
+ * aproximate dx(dt) (since we can't solve the integral for any constant other than velocity) with simpson rule
+ * but we also need to explicitly find all constants (pop, crackle, snap, jerk, acceleration, velocity), to do this we 
+ * can use the LIP (Lagrange Interpolation polinom) by remembering the last n values (dFwd, dLat, dH, dt) and doing partial sums to get the "true" points
+ * in order to interpolate.
+ * 
+ *
+ * */
