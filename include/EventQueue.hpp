@@ -1,15 +1,16 @@
 #ifndef EVENT_QUEUE_HPP
 #define EVEN
 
+#include <functional>
 #include <queue>
 
 namespace VexLib{
 
 class Event {
-	bool (* func)(void) = nullptr;
+	std::function<bool(void)> func;
 public:
 	// constructor that can convert a lambda function to an VexLib::Event
-	Event(bool(* action)(void));
+	Event(std::function<bool(void)>);
 	Event() = default;
 	// returns true if the event got cleared, false otherwise to repeat the action
 	virtual bool run();
@@ -17,14 +18,14 @@ public:
 };
 
 class EventQueue{
-	std::queue<Event*> events;
+	std::queue<Event> events;
 public:
 	EventQueue() = default;
 
 	/*
 	 * @brief adds an event to the list
 	 * */
-	EventQueue addEvent(Event*);
+	EventQueue addEvent(Event);
 	
 	/* @brief check if the queue is empty
 	 * */

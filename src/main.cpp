@@ -1,6 +1,8 @@
+#include "EventQueue.hpp"
 #include "Localizer.hpp"
 #include "TwoWheelLocalizer.hpp"
 #include "Units.hpp"
+#include "v5_api.h"
 #include "vex.h"
 #include "VexLib.hpp"
 #include "vex_global.h"
@@ -31,8 +33,9 @@ void initLocalizer(){
 	std::shared_ptr<vex::encoder> 
 		parallelEnc = std::make_shared<vex::encoder>(Brain.ThreeWirePort.PARALLEL_ENCODER_PORT),
 		perpEnc = std::make_shared<vex::encoder>(Brain.ThreeWirePort.PERPENDICULAR_ENCODER_PORT);
+
 	localizer = new VexLib::TwoWheelLocalizer(
-		Pose2D(), Pose2D(),
+		Pose2D(/*TODO: add value*/), Pose2D(/*TODO: add value*/),
 	[](VexLib::AngleUnits cau){
 		return VexLib::convertAngles(VexLib::AngleUnits::deg, cau, imu.heading(vex::deg));
 	},
@@ -43,7 +46,7 @@ void initLocalizer(){
 		lastReading = reading;
 		return ret;
 	},
-	[perpEnc](VexLib::DistanceUnits cdu){
+	[perpEnc](VexLib::DistanceUnits cdu) -> double {
 		static int16_t lastReading = 0;
 		int16_t reading = perpEnc->position(vex::rotationUnits::rev);
 		double ret = (reading - lastReading) * Encoder_Wheel_Radius;
@@ -53,6 +56,8 @@ void initLocalizer(){
 );
 
 }
+
+bool a(){return true;}
 
 int main(){
 	initLocalizer();

@@ -55,7 +55,6 @@ void TwoWheelLocalizer::update(){
 		);
 	} else {
 		// 2nd order estimation (asume constant velocity on both movement and spin)
-		
 
 		double cosIntegral = sin(heading) - sin(currentPos.getH(VexLib::AngleUnits::rad));
 		double sinIntegral = cos(currentPos.getH(VexLib::AngleUnits::rad)) - cos(heading);
