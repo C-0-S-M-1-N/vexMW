@@ -4,15 +4,15 @@
 
 namespace VexLib{
 
-inline double Pose2D::getX(VexLib::DistanceUnits d){
+double Pose2D::getX(VexLib::DistanceUnits d){
 	return VexLib::convertDistance(distUnit, d, x);
 }
 
-inline double Pose2D::getY(VexLib::DistanceUnits d){
+double Pose2D::getY(VexLib::DistanceUnits d){
 	return VexLib::convertDistance(distUnit, d, y);
 }
 
-inline double Pose2D::getH(VexLib::AngleUnits a){
+double Pose2D::getH(VexLib::AngleUnits a){
 	return VexLib::convertAngles(angleUnits, a, h);
 }
 
