@@ -105,7 +105,7 @@ void TwoWheelLocalizer::update(){
  * * * * * constant velocity arc based estimation: * * * * *
  *
  * assume that the robot spins and moves with constant velocities (and for small periods of time (ie ~0.5ms) it aproximates quite good!)
- * constinueing from where we left on linear estimation without multiplying bt dt (since we dont know dt as it can be any arbitrary value)
+ * continueing from where we left on linear estimation without multiplying by dt (since we dont know dt as it can be any arbitrary value)
  *
  * (note: dVar is the change of Var in one loop-time)
  *
@@ -114,8 +114,8 @@ void TwoWheelLocalizer::update(){
  *
  * to get dx and dy we will integrate from 0 to T in order to get the current distances that the bot made since last looptime (remember that everything is in reference to the last frame)
  *
- * dx(dt) = dFwd / dt * dt / dH * (sin(dH/dt * t + heading) - cos(dH / dt * t + heading)) from 0 to dt
- * dx(dt) = dFwd / dH * (sin(dH/dt * dt + heading) - sin(heading) - cos(dH / dt * dt + heading) + cos(heading))
+ * dx(dt) = dFwd / dt * dt / dH * sin(dH/dt * t + heading) - dLat / dt * dt / dH * cos(dH / dt * t + heading) from 0 to dt
+ * dx(dt) = dFwd / dH * (sin(dH/dt * T + heading) - sin(heading)) - dLat / dH * (cos(dH / dt * T + heading) + cos(heading))
  * analog for dy
  *
  * * * * * higher order estimations * * * * *
@@ -128,9 +128,9 @@ void TwoWheelLocalizer::update(){
  * H(t) = pop * t^6 + crackle*t^5 + snap * t^4 + jerk * t^3 + acceleration * t^2 + velocity * t + 0
  *
  * dx(t) / dt = dFwd(t) / dt * cos(H(t)) + dLat(t) / dt * sin(H(t))
- * aproximate dx(dt) (since we can't solve the integral for any constant other than velocity) with simpson rule
- * but we also need to explicitly find all constants (pop, crackle, snap, jerk, acceleration, velocity), to do this we 
- * can use the LIP (Lagrange Interpolation polinom) by remembering the last n values (dFwd, dLat, dH, dt) and doing partial sums to get the "true" points
+ * aproximate dx(dt) (since we can't solve the integral for any constant restriction movement other than velocity) with simpson's rule
+ * but to do this we also need to explicitly find all constants (pop, crackle, snap, jerk, acceleration, velocity) to find the polynom for expressing position, 
+ * to do this we can use the LIP (Lagrange Interpolation polinom) by remembering the last n values (dFwd, dLat, dH, dt) and doing partial sums to get the "true" points
  * in order to interpolate.
  * 
  *
