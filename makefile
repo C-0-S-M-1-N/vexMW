@@ -26,5 +26,9 @@ INC_F  = include
 # build targets
 all: $(BUILD)/$(PROJECT).bin
 
+upload: $(BUILD)/$(PROJECT).bin
+	$(VEXCOM) --slot $(SLOT) --write $(BUILD)/$(PROJECT).bin  
+	
+
 # include build rules
 include vex/mkrules.mk

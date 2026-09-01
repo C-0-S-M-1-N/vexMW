@@ -38,10 +38,12 @@ ifneq ($(OS), Windows_NT)
 	ifeq ("${T}", "")
 	export PATH := ${HOME}/.config/Code/User/globalStorage/vexrobotics.vexcode/tools/cpp/toolchain_linux64/gcc/bin:$(PATH)
 	VEX_SDK_PATH = ${HOME}/.config/Code/User/globalStorage/vexrobotics.vexcode/sdk/cpp/V5/V5_20240802_15_00_00
+	VEX_VEXCOM_PATH = /home/cosmin/.config/Code/User/globalStorage/vexrobotics.vexcode/tools/vexcom/1_0_2_2/linux-x64
 	endif
 
 endif
 
+VEX_VEXCOM_PATH ?= ${HOME}/.config/Code/User/globalStorage/vexrobotics.vexcode/sdk/tools
 
 # backup if still not set
 VEX_SDK_PATH ?= ${HOME}/.config/Code/User/globalStorage/vexrobotics.vexcode/sdk/cpp/V5/V5_20240802_15_00_00
@@ -63,6 +65,8 @@ else
 BUILD_VERBOSE ?= $(VERBOSE)
 endif
 
+SLOT ?= 1
+
 # use verbose flag
 ifeq ($(BUILD_VERBOSE),0)
 Q = @
@@ -79,6 +83,7 @@ LINK    = arm-none-eabi-ld
 ARCH    = arm-none-eabi-ar
 ECHO    = @echo
 DEFINES = -DVexV5
+VEXCOM  = ${VEX_VEXCOM_PATH}/vexcom
 
 # platform specific macros
 ifeq ($(OS),Windows_NT)

@@ -32,6 +32,7 @@ inline double convertDistance(DistanceUnits from, DistanceUnits to, double val){
 }
 
 inline double convertAngles(AngleUnits from, AngleUnits to, double val){
+	if(from == to) return val;
 	return val * ((from - to == 1 ? M_PI / 180.0 : 180.0 / M_PI));
 }
 

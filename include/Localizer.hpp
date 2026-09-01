@@ -14,15 +14,16 @@ typedef struct Pose2D {
            DistanceUnits distUnit = DistanceUnits::mm, 
            AngleUnits angleUnits = AngleUnits::rad)
         : x(x), y(y), h(h), distUnit(distUnit), angleUnits(angleUnits) {}
-	double getX(VexLib::DistanceUnits);
-	double getY(VexLib::DistanceUnits);
-	double getH(VexLib::AngleUnits);
+	double getX(VexLib::DistanceUnits) const;
+	double getY(VexLib::DistanceUnits) const;
+	double getH(VexLib::AngleUnits) const;
 } Pose2D ;
 
 Pose2D operator -(const Pose2D&, const Pose2D&);
 Pose2D operator +(const Pose2D&, const Pose2D&);
 Pose2D operator *(const Pose2D&, double);
 Pose2D operator /(const Pose2D&, double);
+double getDistance(const Pose2D& a, const Pose2D& b);
 
 
 class Localizer {
