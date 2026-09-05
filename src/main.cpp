@@ -2,6 +2,7 @@
 #include "Paths.hpp"
 #include "TwoWheelLocalizer.hpp"
 #include "Units.hpp"
+#include "Display.hpp"
 #include "vex.h"
 #include "VexLib.hpp"
 #include "vex_brain.h"
@@ -64,27 +65,36 @@ bool a(){return true;}
 #define accuracy 0.001
 
 int main(){
+	Display display = Display();
+	display.onUserCreate(); ///seteaza doar offset-urile momentan
 //	initLocalizer();
 //	vex::thread localizerUpdate([]() -> void { localizer->update(); });
 	std::vector<Pose2D> p({Pose2D(100, 150), Pose2D(320, 150), Pose2D(170, 180)});
 	VexLib::BeziereCurve traj(p);
 	std::function<Pose2D(double)> tF = (traj.getPathFunction());
-
-	vex::brain::lcd& screen = Brain.Screen;
-
-	screen.setPenColor(vex::white);
-	screen.clearScreen();
-
-	for(auto i: p){
-		screen.drawCircle(i.x, i.y, 10, vex::red);
-	}
 	
-	for(double t = 0; t <= 1; t += accuracy){
-		screen.drawPixel(tF(t).x, 239 - tF(t).y);
-	}
 
-	screen.render();
+
+	// vex::brain::lcd& screen = Brain.Screen;
+
+	// screen.setPenColor(vex::white);
+	// screen.clearScreen();
+
+	// for(auto i: p){
+	// 	screen.drawCircle(i.x, i.y, 10, vex::red);
+	// }
+	
+	// for(double t = 0; t <= 1; t += accuracy){
+	// 	screen.drawPixel(tF(t).x, 239 - tF(t).y);
+	// }
+	
+	// screen.render();
+
     while(1){
+		display.onUserUpdate(getElapsedTime(VexLib::TimeUnits::s));
+		display.butonZoom(Pose2D(20, 20), 80, 60);
+		Brain.Screen.render(); ///DOUBLE BUFFERING
+
     }
 	if(localizer != nullptr)
 		delete localizer;
