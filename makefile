@@ -26,6 +26,8 @@ INC_F  = include
 # build targets
 all: $(BUILD)/$(PROJECT).bin
 
+test: $(BUILD)/test/$(PROJECT)-test
+
 upload: $(BUILD)/$(PROJECT).bin
 	$(VEXCOM) --slot $(SLOT) --write $(BUILD)/$(PROJECT).bin  
 	
