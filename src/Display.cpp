@@ -1,8 +1,9 @@
 #include "Display.hpp"
 
 Display::Display() {
-    screen.setPenColor(vex::white);
+    screen.setPenColor(vex::black);
     screen.clearScreen();
+    Display::onUserCreate();
 }
 
 void Display::butonZoom(VexLib::Pose2D pos, int btnHeight, int btnWidth) {
@@ -105,11 +106,25 @@ bool Display::onCursorUpdate(float elapsedTime) {
     return true;
 }
 
-void Display::drawRectangle(int x, int y, int width, int height, vex::color color) {
+/*
+    @Brief foloseste coord din stanga sus si lungimea + latimea 
+    sa deseneze dreptunghiul de culoarea color 
+*/
+void Display::drawRectangle1(int x, int y, int width, int height, vex::color color) {
     screen.clearScreen(); ///POATE E REDUNDANT, am adaugat direct in userUpdate clearScreen
     screen.setPenColor(color);
     screen.drawRectangle(x, y, width, height);
     screen.setFillColor(color);
+}
+
+/*
+    @Brief foloseste coord din stanga sus si coord din dreapta jos 
+    sa deseneze dreptunghiul de culoarea color
+*/
+void Display::drawRectangle2(int x1, int y1, int x2, int y2, vex::color color) {
+    int width = x2 - x1;
+    int height = y2 - y1;
+    Display::drawRectangle1(x1, y1, width, height, color);
 }
 
 bool Display::onUserCreate() {
@@ -127,11 +142,7 @@ bool Display::onUserUpdate(float elapsedTime) {
     WorldToScreen(lx, ly, pixel_lx, pixel_ly);
     
     //screen.clearScreen(); /// CU DOUBLE BUFFERING NU MAI E NEVOIE DE CLEARSCREEN
-    int rectangleX = pixel_sx < pixel_lx ? pixel_sx : pixel_lx; ///stie geminy sa converteasca coordonatele in marimi
-    int rectangleY = pixel_sy < pixel_ly ? pixel_sy : pixel_ly;
-    int rectangleWidth = pixel_sx < pixel_lx ? pixel_lx - pixel_sx : pixel_sx - pixel_lx;
-    int rectangleHeight = pixel_sy < pixel_ly ? pixel_ly - pixel_sy : pixel_sy - pixel_ly;
-    drawRectangle(rectangleX, rectangleY, rectangleWidth, rectangleHeight, vex::color::blue);
+    drawRectangle2(pixel_sx, pixel_sy, pixel_lx, pixel_ly, vex::color::blue);
     
     onCursorUpdate(elapsedTime);
     return true;

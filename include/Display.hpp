@@ -28,7 +28,8 @@ public:
     void WorldToScreen(float worldX, float worldY, int &screenX, int &screenY, VexLib::DistanceUnits unit = VexLib::DistanceUnits::mm);
     void ScreenToWorld(int screenX, int screenY, float &worldX, float &worldY, VexLib::DistanceUnits unit = VexLib::DistanceUnits::mm);
     bool onCursorUpdate(float elapsedTime);
-    void drawRectangle(int x, int y, int width, int height, vex::color color);
+    void drawRectangle1(int x, int y, int width, int height, vex::color color = vex::color::white);
+    void drawRectangle2(int x1, int y1, int x2, int y2, vex::color color = vex::color::white);
     virtual bool onUserCreate();
     virtual bool onUserUpdate(float elapsedTime);
 };

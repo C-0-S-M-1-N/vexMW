@@ -66,8 +66,8 @@ bool a(){return true;}
 
 int main(){
 	Display display = Display();
-	display.onUserCreate(); ///seteaza doar offset-urile momentan
-//	initLocalizer();
+	
+	//	initLocalizer();
 //	vex::thread localizerUpdate([]() -> void { localizer->update(); });
 	std::vector<Pose2D> p({Pose2D(100, 150), Pose2D(320, 150), Pose2D(170, 180)});
 	VexLib::BeziereCurve traj(p);
