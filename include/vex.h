@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef TEST
+// add vex emulated implementation
+
+#else
+
 #include "v5.h"
 #include "v5_vcs.h"
 
@@ -14,3 +19,5 @@
 
 #define repeat(iterations)                                                     \
   for (int iterator = 0; iterator < iterations; iterator++)
+
+#endif

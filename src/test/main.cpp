@@ -29,11 +29,6 @@ int main(){
 
     ClearBackground(BLACK);
 
-	for(auto a : p){
-		auto A = a * SCALE;
-		DrawCircle(A.x, A.y, 3*SCALE, RED);
-	}
-
     for (double p = 0; p <= 1 - ACC; p += ACC) {
 		Pose2D p0 = tF(p) * SCALE, p1 = tF(p + ACC) * SCALE;
 		DrawLine(p0.x, p0.y, p1.x, p1.y, WHITE);

@@ -80,7 +80,7 @@ int main(){
 	}
 	
 	for(double t = 0; t <= 1; t += accuracy){
-		screen.drawPixel(tF(t).x, 239 - tF(t).y);
+		screen.drawPixel(tF(t).x, tF(t).y);
 	}
 
 	screen.render();

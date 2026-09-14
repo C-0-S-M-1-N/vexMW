@@ -26,11 +26,9 @@ $(BUILD)/$(PROJECT).bin: $(BUILD)/$(PROJECT).elf
 $(BUILD)/$(PROJECTLIB).a: $(OBJ)
 	$(Q)$(ARCH) $(ARCH_FLAGS) $@ $^
 
-$(BUILD)/test/$(PROJECT)-test: $(OBJ)
+$(BUILD)/$(PROJECT)-test: $(OBJ_TEST)
 	$(ECHO) "LINK $@"
-	$(Q)ld -o $@ $^ -lraylib $(LIBS)
-	$(Q)$(SIZE) $@
-
+	$(Q)$(CXX) -o $@ $^ -lraylib $(LIBS)
 
 # clean project
 clean:

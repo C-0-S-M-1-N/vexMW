@@ -7,7 +7,7 @@ sq = $(subst $(sp),?,$1)
 
 # default platform and build location
 PLATFORM  = vexv5
-BUILD     = build
+BUILD     ?= build
 
 # version for clang headers
 ifneq ("$(origin HEADERS)", "command line")
@@ -75,14 +75,19 @@ Q =
 endif
 
 # compile and link tools
-CC      = clang
-CXX     = clang
+ifneq ("$(origin CC)", "command line")
+	CC     = clang
+endif
+
+ifneq ("$(origin CXX)", "command line")
+	CXX     = clang
+endif
 OBJCOPY = arm-none-eabi-objcopy
 SIZE    = arm-none-eabi-size
 LINK    = arm-none-eabi-ld
 ARCH    = arm-none-eabi-ar
 ECHO    = @echo
-DEFINES = -DVexV5
+DEFINES ?= -DVexV5
 VEXCOM  = ${VEX_VEXCOM_PATH}/vexcom
 
 # platform specific macros
@@ -108,20 +113,23 @@ TOOL_LIB  = -L"$(VEX_SDK_PATH)/$(PLATFORM)/gcc/libs"
 # compiler flags
 CFLAGS_CL = -target thumbv7-none-eabi -fshort-enums -Wno-unknown-attributes -U__INT32_TYPE__ -U__UINT32_TYPE__ -D__INT32_TYPE__=long -D__UINT32_TYPE__='unsigned long' 
 CFLAGS_V7 = -march=armv7-a -mfpu=neon -mfloat-abi=softfp
-CFLAGS    = ${CFLAGS_CL} ${CFLAGS_V7} -Os -Wall -Werror=return-type -ansi -std=gnu99 $(DEFINES)
-CXX_FLAGS = ${CFLAGS_CL} ${CFLAGS_V7} -Os -Wall -Werror=return-type -fno-rtti -fno-threadsafe-statics -fno-exceptions  -std=gnu++11 -ffunction-sections -fdata-sections $(DEFINES)
+CFLAGS    ?= ${CFLAGS_CL} ${CFLAGS_V7} -Os -Wall -Werror=return-type -ansi -std=gnu99 $(DEFINES)
+CXX_FLAGS ?= ${CFLAGS_CL} ${CFLAGS_V7} -Os -Wall -Werror=return-type -fno-rtti -fno-threadsafe-statics -fno-exceptions  -std=gnu++11 -ffunction-sections -fdata-sections $(DEFINES)
 
 # linker flags
-LNK_FLAGS = -nostdlib -T "$(VEX_SDK_PATH)/$(PLATFORM)/lscript.ld" -R "$(VEX_SDK_PATH)/$(PLATFORM)/stdlib_0.lib" -Map="$(BUILD)/$(PROJECT).map" --gc-section -L"$(VEX_SDK_PATH)/$(PLATFORM)" ${TOOL_LIB}
+LNK_FLAGS ?= -nostdlib -T "$(VEX_SDK_PATH)/$(PLATFORM)/lscript.ld" -R "$(VEX_SDK_PATH)/$(PLATFORM)/stdlib_0.lib" -Map="$(BUILD)/$(PROJECT).map" --gc-section -L"$(VEX_SDK_PATH)/$(PLATFORM)" ${TOOL_LIB}
 
 # future statuc library
 PROJECTLIB = lib$(PROJECT)
 ARCH_FLAGS = rcs
 
 # libraries
-LIBS =  --start-group -lv5rt -lstdc++ -lc -lm -lgcc --end-group
+LIBS ?=  --start-group -lv5rt -lstdc++ -lc -lm -lgcc --end-group
 
 # include file paths
-INC += $(addprefix -I, ${INC_F})
-INC += -I"$(VEX_SDK_PATH)/$(PLATFORM)/include"
-INC += ${TOOL_INC}
+#
+ifneq ("$(origin INC)", "command line")
+	INC += $(addprefix -I, ${INC_F})
+	INC += -I"$(VEX_SDK_PATH)/$(PLATFORM)/include"
+	INC += ${TOOL_INC}
+endif

@@ -14,6 +14,9 @@ SRC_C += $(wildcard src/*/*.c)
 
 OBJ = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(filter-out src/test/%, $(SRC_C)))) )
 
+OBJ_TEST = $(addprefix $(BUILD)/, $(addsuffix .o, $(basename $(filter-out src/main.cpp, $(SRC_C)))))
+
+
 # location of include files that c and cpp files depend on
 SRC_H  = $(wildcard include/*.h)
 
@@ -26,7 +29,18 @@ INC_F  = include
 # build targets
 all: $(BUILD)/$(PROJECT).bin
 
-test: $(BUILD)/test/$(PROJECT)-test
+test: 
+	$(MAKE) test_app \
+		DEFINES="-DTEST" \
+		CXX="g++" \
+		CXX_FLAGS="-Os -Wall -DTEST" \
+		INC="-I./include" \
+		LIBS="-lc -lm" \
+		BUILD="build/test" \
+		PLATFORM="TEST"
+
+test_app: $(BUILD)/$(PROJECT)-test
+
 
 upload: $(BUILD)/$(PROJECT).bin
 	$(VEXCOM) --slot $(SLOT) --write $(BUILD)/$(PROJECT).bin  

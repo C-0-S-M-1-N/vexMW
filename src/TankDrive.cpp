@@ -1,3 +1,4 @@
+#include "Localizer.hpp"
 #include "vex.h"
 #include "TankDrive.h"
 #include <algorithm>
@@ -12,10 +13,11 @@ void TankDrive::drive(float fwd, float rot){
 
     lpow /= div;
     rpow /= div;
-
+	
+#ifndef TEST
     left.spin(vex::directionType::fwd, lpow * BATTERY_VOLTAGE, vex::voltageUnits::volt);
-    left.spin(vex::directionType::fwd, rpow * BATTERY_VOLTAGE, vex::voltageUnits::volt);
-
+    right.spin(vex::directionType::fwd, rpow * BATTERY_VOLTAGE, vex::voltageUnits::volt);
+#endif
 }
 
 void TankDrive::lockRotation(VexLib::AngleUnits u, float angle, bool lock){
@@ -25,4 +27,16 @@ void TankDrive::lockRotation(VexLib::AngleUnits u, float angle, bool lock){
     }
     setLockRotation(true);
     
+}
+
+void TankDrive::setLocalizer(VexLib::Localizer* l){
+	this->localizer = l;
+}
+
+void TankDrive::setFollowingPath(VexLib::Path* p){
+	this->currentPath = p;
+}
+
+void TankDrive::updateAutonomousDrive(){
+	
 }
