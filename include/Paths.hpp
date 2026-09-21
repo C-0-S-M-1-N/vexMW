@@ -12,6 +12,7 @@ class Path {
 public:
 	Path() = default;
 	virtual std::function<Pose2D(double)> getPathFunction() = 0;
+	virtual std::function<Pose2D(double)> getDerivativePathFunction() = 0;
 };
 
 class MultiPointPath : public Path{
@@ -21,6 +22,7 @@ public:
 	MultiPointPath(const std::vector<Pose2D>&);
 
 	std::function<Pose2D(double)> getPathFunction();
+	std::function<Pose2D(double)> getDerivativePathFunction();
 };
 
 class BeziereCurve : public Path{
@@ -30,6 +32,7 @@ public:
 	
 	void modifyPoint(size_t idx, const Pose2D&);
 	std::function<Pose2D(double)> getPathFunction();
+	std::function<Pose2D(double)> getDerivativePathFunction();
 };
 
 }; // namespace VexLib

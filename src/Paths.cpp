@@ -45,6 +45,10 @@ std::function<Pose2D(double)> MultiPointPath::getPathFunction() {
     };
 }
 
+std::function<Pose2D(double)> MultiPointPath::getDerivativePathFunction(){
+	return [](double t){return Pose2D(); };
+}
+
 BeziereCurve::BeziereCurve(const std::vector<Pose2D>& p): points(p){};
 
 void BeziereCurve::modifyPoint(size_t idx, const Pose2D& p){ points.at(idx) = p; }
@@ -62,6 +66,20 @@ std::function<Pose2D(double)> BeziereCurve::getPathFunction(){
 		for(auto point : points){
 			ret = ret + point * nChooseK(points.size() - 1, pow) * std::pow(t , pow) * std::pow(1 - t, points.size() - pow - 1);
 			pow ++;
+		}
+		return ret;
+	};
+}
+
+std::function<Pose2D(double)> BeziereCurve::getDerivativePathFunction(){
+	return [this](double t) -> Pose2D{
+		Pose2D ret = Pose2D();
+		int pow = 0;
+		for(auto point : points){
+			ret = ret + point * nChooseK(points.size() - 1, pow) * 
+					std::pow(t, std::max(pow - 1, 0)) *
+					std::pow(1 - t, std::max((int)points.size() - pow - 2, 0)) *
+					(pow - 2 * pow * t + t * (points.size() - 1));
 		}
 		return ret;
 	};
