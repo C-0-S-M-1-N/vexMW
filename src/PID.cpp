@@ -1,6 +1,7 @@
 #include "PID.hpp"
 #include "Units.hpp"
 #include "VexLib.hpp"
+#include "math.hpp"
 
 VexLib::PIDFController::PIDFController(VexLib::PIDFCoefficients pidfc):
 		coeff{pidfc}, Isum{0}, minSO{0}, maxSO{0}, frequency{50}{}
@@ -20,15 +21,16 @@ double VexLib::PIDFController::getPowerOutputWithVelo(double error, double veloc
 		return lastReturn;
 
 	double P = error * coeff.P;
-	Isum += error * coeff.I;
+	double I = error * (getElapsedTime(TimeUnits::s) - lastTime) * coeff.I;
 	double D = velocity * coeff.D;
 
-	double ret = P + D + Isum + coeff.F;
+	double ret = P + D + Isum + I;
+	ret += coeff.F * sgn(ret);
 	if((ret > maxSO || ret < minSO) &&  // saturated controller
 		error * ret > 0 				// integral is pushing the system past its limits
 		){
-		ret -= Isum;
-	}
+		ret -= I;
+	} else Isum += I;
 	lastReturn = ret;
 	lastTime = getElapsedTime(TimeUnits::s);
 
