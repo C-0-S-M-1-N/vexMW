@@ -5,40 +5,38 @@
 #include "PID.hpp"
 #include "Units.hpp"
 #include "Localizer.hpp"
+#include "vex_motorgroup.h"
 
-extern VexLib::Localizer* localizer;
 
 class TankDrive {
     /* Autonomous parameters */
-    VexLib::PIDFController HeadingController;
-	VexLib::PIDFController TranslationalController;
+    VexLib::PIDFController HeadingController = VexLib::PIDFController({1.2, 0, 0, 0});
+	VexLib::PIDFController TranslationalController = VexLib::PIDFController({0, 0, 0, 0});
 
 	VexLib::Path* currentPath;
 	VexLib::Localizer* localizer;
+	double pullRadius = 300;
 
     /* Driver controlled params*/
 
-#ifndef TEST
     vex::motor_group left, right; 
-#endif
-    float angleLock = 0;
     bool FLAGS = 0;
 
-    inline bool isRotationBlocked() { return FLAGS & 0b1; }
+    inline bool isRotationLocked() { return FLAGS & 0b1; }
     inline void setLockRotation(bool lock) { lock ? FLAGS |= 0x1 : FLAGS &= 0xFE; }
 
     inline bool isRunningPath() { return FLAGS & 0b10; }
     inline void setRunPath(bool set) { set ? FLAGS |= 0x02 : FLAGS &= 0xFD; }
 
+	double getClosestPointToPath(double step = 0.01, int iter = 30);
+	VexLib::Pose2D PathFollowerVector();
+
 public:
-#ifndef TEST
     TankDrive(const vex::motor_group& LEFT_SIDE_MOTORS, const vex::motor_group& RIGHT_SIDE_MOTORS, VexLib::Localizer* Localizer = nullptr):
 	localizer {Localizer},
     left{LEFT_SIDE_MOTORS}, right{RIGHT_SIDE_MOTORS}{}
-#endif
 	
 	/* Driver controlled functions */
-
     void drive(float forward, float rotate);
     void lockRotation(VexLib::AngleUnits, float, bool lock = true);
  

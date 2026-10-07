@@ -48,7 +48,7 @@ public:
 	 * */
 	void setPosition(const Pose2D& pose);
 	virtual void operator ()() = 0;
-
+	virtual ~Localizer();
 };
 
 }; // namespace VexLib

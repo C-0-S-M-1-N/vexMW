@@ -80,4 +80,6 @@ void Localizer::resetTracking(){
 	this->setPosition(Pose2D());
 }
 
+Localizer::~Localizer(){}
+
 }; // namespace VexLib

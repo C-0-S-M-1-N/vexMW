@@ -44,7 +44,7 @@ void TwoWheelLocalizer::update(){
 	Pose2D dpose;
 			
 
-	if(fabs(heading) <= VexLib::convertAngles(VexLib::AngleUnits::deg, CAU, 0.3)){
+	if(fabs(heading) <= VexLib::convertAngles(VexLib::AngleUnits::deg, CAU, 0.3) || 1){
 		// linear estimation for near linear movement
 		dpose = Pose2D(
 				fwd * cos(heading) - strf * sin(heading),
@@ -56,8 +56,8 @@ void TwoWheelLocalizer::update(){
 	} else {
 		// 2nd order estimation (asume constant velocity on both movement and spin)
 
-		double cosIntegral = sin(heading) - sin(currentPos.getH(VexLib::AngleUnits::rad));
-		double sinIntegral = cos(currentPos.getH(VexLib::AngleUnits::rad)) - cos(heading);
+		double cosIntegral = sin(heading) - sin(dH);
+		double sinIntegral = cos(dH) - cos(heading);
 
 		dpose = Pose2D(
 				fwd / dH * cosIntegral - strf / dH * sinIntegral,
@@ -67,7 +67,9 @@ void TwoWheelLocalizer::update(){
 				VexLib::AngleUnits::rad
 		);
 	}
-	setPosition(currentPos + dpose);
+	Pose2D sp = currentPos + dpose;
+	sp.h = VexLib::convertAngles(VexLib::AngleUnits::rad, CAU, heading);
+	setPosition(sp);
 }
 
 #undef CUD

@@ -74,14 +74,12 @@ std::function<Pose2D(double)> BeziereCurve::getPathFunction(){
 std::function<Pose2D(double)> BeziereCurve::getDerivativePathFunction(){
 	return [this](double t) -> Pose2D{
 		Pose2D ret = Pose2D();
-		int pow = 0;
-		for(auto point : points){
-			ret = ret + point * nChooseK(points.size() - 1, pow) * 
-					std::pow(t, std::max(pow - 1, 0)) *
-					std::pow(1 - t, std::max((int)points.size() - pow - 2, 0)) *
-					(pow - 2 * pow * t + t * (points.size() - 1));
+		int n = (int)points.size() - 1;   // degree
+		for(int i = 0; i < n; i++){
+			double b = nChooseK(n - 1, i) * std::pow(t, i) * std::pow(1 - t, n - 1 - i);
+			ret = ret + (points[i + 1] - points[i]) * (n * b);
 		}
-		return ret;
+		return ret;			
 	};
 }
 

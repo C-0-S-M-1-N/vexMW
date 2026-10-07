@@ -17,7 +17,7 @@ class PIDFController {
 	double lastReturn = 0;
 
 public:
-	PIDFController(PIDFCoefficients = {0, 0, 0, 0});
+	explicit PIDFController(PIDFCoefficients = {0, 0, 0, 0});
 	
 	/*
 	 * @Brief sets the controller to run at a specific frequency 
