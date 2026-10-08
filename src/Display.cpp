@@ -23,7 +23,7 @@ void Display::butonZoom(VexLib::Pose2D pos, int btnHeight, int btnWidth) {
 
     ///ZOOM OUT BUTTON
     int zoomOutX = pos.getX(VexLib::DistanceUnits::mm);
-    int zoomOutY = pos.getY(VexLib::DistanceUnits::mm) + btnHeight + 10; // Position below the zoom button
+    int zoomOutY = pos.getY(VexLib::DistanceUnits::mm) + btnHeight + 10;
     vex::color zoomOutColor = flagZoomOut ? vex::color::green : vex::color::red;
 
     Brain.Screen.drawRectangle(zoomOutX, zoomOutY, btnWidth, btnHeight, zoomOutColor);
@@ -106,7 +106,6 @@ bool Display::onCursorUpdate(float elapsedTime) {
     offsetX += (mouseWorldX_beforeZoom - mouseWorldX_afterZoom);
     offsetY += (mouseWorldY_beforeZoom - mouseWorldY_afterZoom);
 
-
     return true;
 }
 
@@ -114,8 +113,6 @@ void Display::clearScreen(){
     screen.clearScreen();
 }
 
-// float f[9] = {1, 3.5, 300, 5, 6, 9, 100, 22};
-// float t[9] = {0, 1, 2, 60, 70, 90, 200, 240};
 float f[5] = {100, -50, 60, 200, 150};
 float t[5] = {0, 240, 250, 300, 380};
 float t2[100];
@@ -124,7 +121,8 @@ float f2[100];
 void Display::renderScreen(){
     clearScreen();
     drawAxes();
-    if (combo) {
+        
+    if (combo) {  ///combo se comporta ca un switch ptr. Hamburger
             butonZoom(VexLib::Pose2D(20, 20), 80, 60);
             tastatura();
     } else {
@@ -139,7 +137,8 @@ void Display::renderScreen(){
     }
     drawFunction(f2, t2, 100, vex::color::red);
     drawFunction(f, t, 5, vex::color::yellow);
-    
+
+    //screen.render(true);
 }
 
 void Display::drawRectangle(int x, int y, int width, int height, vex::color color) {
@@ -157,14 +156,9 @@ void Display::drawRectangle(int x, int y, int width, int height, vex::color colo
     // drawRectangle(rectangleX, rectangleY, rectangleWidth, rectangleHeight, vex::color::blue);
 
 
-
-    //screen.clearScreen(); ///POATE E REDUNDANT, am adaugat direct in userUpdate clearScreen
     screen.setPenColor(color);
     screen.drawRectangle(x, y, width, height);
     screen.setFillColor(color);
-    // if(flagHamburger != true){
-    //     screen.render();
-    // }
 }
 
 void Display::drawLine(float sx1, float sy1, float sx2, float sy2, vex::color color){
@@ -172,12 +166,8 @@ void Display::drawLine(float sx1, float sy1, float sx2, float sy2, vex::color co
     WorldToScreen(sx1, sy1, pixel_sx1, pixel_sy1);
     WorldToScreen(sx2, sy2, pixel_sx2, pixel_sy2);
 
-    //screen.clearScreen();
     screen.setPenColor(color);
     screen.drawLine(pixel_sx1, pixel_sy1, pixel_sx2, pixel_sy2);
-    // if(flagHamburger != true){
-    //     screen.render();
-    // }
 }
 
 
@@ -187,24 +177,38 @@ bool Display::onUserCreate() {
     return true;
 }
 
+float dimensiuneAxaX = 960, dimensiuneAxaY = 270;
 void Display::drawAxes(){
-    float sx1 = 0, sy1 = 0;
-    float sx2 = 0, sy2 = 270;
+    float sx1 = 0, sy1 =  135 - dimensiuneAxaY / 2;
+    float sx2 = 0, sy2 = dimensiuneAxaY;
     drawLine(sx1, sy1, sx2, sy2, vex::color::white);
-    float sx1_2 = 0, sy1_2 = 135;
-    float sx2_2 = 480, sy2_2 = 135;
+    float sx1_2 =-60, sy1_2 = 135;
+    float sx2_2 = dimensiuneAxaX, sy2_2 = 135;
     drawLine(sx1_2, sy1_2, sx2_2, sy2_2, vex::color::white);
 }
 
 
 void Display::drawFunction(float (*func), float (*time), int lungime, vex::color color){
+    if(lungime > dimensiuneAxaX){
+        dimensiuneAxaX = lungime + 40; //cu surplus de 20
+    }
+    scaleX = scaleY = lungime / 480.0f;
     for(int i = 0; i < lungime - 1; i++){
-        float t1 = time[i];
-        float t2 = time[i + 1];
-        float y1 = func[i];
-        float y2 = func[i + 1];
-        printf("i = %d \t t1: %f, y1: %f, t2: %f, y2: %f\n", i, t1, y1, t2, y2);
-        Display::drawLine(t1, -y1 + 135, t2, -y2 + 135, color);
+        float t1, t2, y1, y2;
+        t1 = time[i];
+        t2 = time[i + 1];
+        y1 = func[i];
+        y2 = func[i + 1];
+        if(abs(y1) * 2 > dimensiuneAxaY){ //|| abs(y2) * 2 > dimensiuneAxaY){
+            dimensiuneAxaY = abs(y1) * 2 + 40;  //cu surplus de 20 pe fiecare cadran
+        }
+        if(lungime < 480){
+            t1 = t1 * scaleX;
+            t2 = t2 * scaleX;
+            y2 = y2 * scaleY;
+            y1 = y1 * scaleY;
+        }
+        Display::drawLine(t1, -y1 + dimensiuneAxaY / 2, t2, -y2 + dimensiuneAxaY / 2, color);
     }
 }
 
@@ -221,7 +225,6 @@ bool Display::onUserUpdate(float elapsedTime, vex::controller cntrler) {
     } else {
         flagHamburger = false;
     }
-    ///combo se comporta ca un switch
 
     onCursorUpdate(elapsedTime);
     return true;
@@ -229,16 +232,16 @@ bool Display::onUserUpdate(float elapsedTime, vex::controller cntrler) {
 
 void Display::tastatura(){
 
-    const int keyboardX = 150;
+    const int keyboardX = 230;
     const int keyboardY = 25;
     const int buttonWidth = 55;
     const int buttonHeight = 40;
     const int gap = 5;
-    const char* keys[4][3] = {
-        {"7", "8", "9"},
-        {"4", "5", "6"},
-        {"1", "2", "3"},
-        {".", "0", "Ent"}
+    const char* keys[4][4] = {
+        {"7", "8", "9", "<"},
+        {"4", "5", "6", ""},
+        {"1", "2", "3", ""},
+        {".", "0", "⏎", ""}
     };
 
     if (!tastaturaPreviousVisible) {
@@ -252,25 +255,31 @@ void Display::tastatura(){
     bool pressed = pressing && !tastaturaPreviousPressing;
 
     if (pressed) {
-        for (int row = 0; row < 4; ++row) {
-            for (int column = 0; column < 3; ++column) {
+        for (int row = 0; row < 4; row++) {
+            for (int column = 0; column < 4; column++) {
+                const std::string key = keys[row][column];
+                if (key.empty()) continue;
+
                 int buttonX = keyboardX + column * (buttonWidth + gap);
                 int buttonY = keyboardY + row * (buttonHeight + gap);
-                bool insideButton = pressX >= buttonX && pressX <= buttonX + buttonWidth &&
-                    pressY >= buttonY && pressY <= buttonY + buttonHeight;
+                bool insideButton = (pressX >= buttonX && pressX <= buttonX + buttonWidth &&
+                                     pressY >= buttonY && pressY <= buttonY + buttonHeight);
 
                 if (!insideButton) {
                     continue;
                 }
 
-                const std::string key = keys[row][column];
                 if (key == ".") {
                     if (tastaturaText.find('.') == std::string::npos) {
                         tastaturaText += key;
                     }
-                } else if (key == "Ent") {
+                } else if (key == "⏎") {
                     tastaturaEnterPressed = true;
                     combo = false;
+                } else if (key == "<") {
+                    if (!tastaturaText.empty()) {
+                        tastaturaText.pop_back();
+                    }
                 } else {
                     tastaturaText += key;
                     tastaturaEnterPressed = false;
@@ -281,19 +290,20 @@ void Display::tastatura(){
 
     screen.setPenColor(vex::color::white);
     screen.setFillColor(vex::color::black);
-    screen.drawRectangle(keyboardX - gap, keyboardY - 22,
-        3 * buttonWidth + 2 * gap + 2 * gap, 4 * buttonHeight + 3 * gap + 30);
+    screen.drawRectangle(keyboardX - gap, keyboardY - 22, 4 * buttonWidth + 5 * gap, 4 * buttonHeight + 3 * gap + 30);
     screen.printAt(keyboardX, keyboardY - 5, false, "%s", tastaturaText.c_str());
 
-    for (int row = 0; row < 4; ++row) {
-        for (int column = 0; column < 3; ++column) {
+    for (int row = 0; row < 4; row++) {
+        for (int column = 0; column < 4; column++) {
+            const std::string key = keys[row][column];
+            if (key.empty()) continue;
+
             int buttonX = keyboardX + column * (buttonWidth + gap);
             int buttonY = keyboardY + row * (buttonHeight + gap);
             screen.setFillColor(vex::color::blue);
             screen.drawRectangle(buttonX, buttonY, buttonWidth, buttonHeight);
             screen.setPenColor(vex::color::white);
-            screen.printAt(buttonX + buttonWidth / 2 - 5, buttonY + buttonHeight / 2 + 5,
-                false, "%s", keys[row][column]);
+            screen.printAt(buttonX + buttonWidth / 2 - 5, buttonY + buttonHeight / 2 + 5, false, "%s", keys[row][column]);
         }
     }
 

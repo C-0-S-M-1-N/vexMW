@@ -12,11 +12,10 @@ class Display {
 private:
     vex::brain::lcd& screen = Brain.Screen;
     bool flagZoom = false; bool flagZoomOut = false; bool flagHamburger = false;
+    unsigned short int flags = 0x00;
 
     float offsetX = 0.0f; float offsetY = 0.0f;
-
     float startPanX = 0.0f; float startPanY = 0.0f;
-
     float scaleX = 1.0f; float scaleY = 1.0f;
 
     std::string tastaturaText;

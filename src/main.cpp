@@ -70,7 +70,7 @@ int randare(void *d){
 	Display *disp = (Display*)(d);
 	while(1){
 		disp->renderScreen();
-		vex::this_thread::sleep_for(68);
+		vex::this_thread::sleep_for(34);
 	}
 	return 0;
 }
@@ -86,30 +86,16 @@ int main(){
 	std::vector<Pose2D> p({Pose2D(100, 150), Pose2D(320, 150), Pose2D(170, 180)});
 	VexLib::BeziereCurve traj(p);
 	std::function<Pose2D(double)> tF = (traj.getPathFunction());
-	
-
-		// vex::motor m1 = vex::motor(vex::PORT11);
-		// vex::motor m2 = vex::motor(vex::PORT12);
-		// vex::motor m3 = vex::motor(vex::PORT13);
-		// vex::motor m4 = vex::motor(vex::PORT14);
-		// vex::motor_group stanga = vex::motor_group(m2, m3);
-		// vex::motor_group dreapta = vex::motor_group(m1, m4);
-
-		// const vex::motor_group& LEFT_SIDE_MOTORS = vex::motor_group(m2, m3);
-		// const vex::motor_group& RIGHT_SIDE_MOTORS = vex::motor_group(m1, m4);
-		// TankDrive td = TankDrive(LEFT_SIDE_MOTORS, RIGHT_SIDE_MOTORS);
 
 	vex::thread tred(randare, &display);
     while(1){
-		//Brain.Screen.render(true);
 		display.onUserUpdate(getElapsedTime(VexLib::TimeUnits::s), Controller);
-		
-		//Brain.Screen.render(true); ///DOUBLE BUFFERING
+
 		if(display.tastaturaAConfirmat()){
 			printf("%s\n\n", display.getTastaturaText().c_str());
 		}
-		// td.drive(1,0);
-		//vex::task::sleep(66.66667);
+
+		vex::task::sleep(20);
     }
 	if(localizer != nullptr)
 		delete localizer;
