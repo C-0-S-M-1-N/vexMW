@@ -2,9 +2,12 @@
 #include "TankDrive.h"
 #include <algorithm>
 
-extern const float BATTERY_VOLTAGE;
+
+extern vex::brain Brain;
 
 void TankDrive::drive(float fwd, float rot){
+
+    float BATTERY_VOLTAGE = Brain.Battery.voltage(vex::volt);
 
     float lpow = fwd + rot;
     float rpow = fwd - rot;

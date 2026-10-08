@@ -1,30 +1,21 @@
 #include "Display.hpp"
+#include <fstream>
+
+std::ifstream fisier("date.txt");
+
+///X Y A si B pentru a deschide meniul burger pentru zoom si tastatura
 
 Display::Display() {
-    screen.setPenColor(vex::black);
+    screen.setPenColor(vex::white);
     screen.clearScreen();
-    Display::onUserCreate();
 }
+
+bool combo = false;
 
 void Display::butonZoom(VexLib::Pose2D pos, int btnHeight, int btnWidth) {
     int buttonX = pos.getX(VexLib::DistanceUnits::mm);
     int buttonY = pos.getY(VexLib::DistanceUnits::mm);
     vex::color btnColor = flagZoom ? vex::color::green : vex::color::red;
-
-    if (mPressed) {
-        int pressX = Brain.Screen.xPosition();
-        int pressY = Brain.Screen.yPosition();
-
-        if (pressX >= buttonX && pressX <= buttonX + btnWidth &&
-            pressY >= buttonY && pressY <= buttonY + btnHeight) {
-            flagZoom = !flagZoom;
-            btnColor = flagZoom ? vex::color::green : vex::color::red;
-
-            if(flagZoom) {
-                flagZoomOut = false; // Disable zoom out when zooming in
-            }
-        }
-    }
 
     Brain.Screen.drawRectangle(buttonX, buttonY, btnWidth, btnHeight, btnColor);
     Brain.Screen.setFillColor(btnColor);
@@ -34,21 +25,6 @@ void Display::butonZoom(VexLib::Pose2D pos, int btnHeight, int btnWidth) {
     int zoomOutX = pos.getX(VexLib::DistanceUnits::mm);
     int zoomOutY = pos.getY(VexLib::DistanceUnits::mm) + btnHeight + 10; // Position below the zoom button
     vex::color zoomOutColor = flagZoomOut ? vex::color::green : vex::color::red;
-
-    if (mPressed) {
-        int pressX = Brain.Screen.xPosition();
-        int pressY = Brain.Screen.yPosition();
-
-        if (pressX >= zoomOutX && pressX <= zoomOutX + btnWidth &&
-            pressY >= zoomOutY && pressY <= zoomOutY + btnHeight) {
-            flagZoomOut = !flagZoomOut;
-            zoomOutColor = flagZoomOut ? vex::color::green : vex::color::red;
-
-            if(flagZoomOut) {
-                flagZoom = false; // Disable zoom in when zooming out
-            }
-        }
-    }
 
     Brain.Screen.drawRectangle(zoomOutX, zoomOutY, btnWidth, btnHeight, zoomOutColor);
     Brain.Screen.setFillColor(zoomOutColor);
@@ -73,6 +49,33 @@ bool Display::onCursorUpdate(float elapsedTime) {
     mPressed = mHold && !previousMouseHeld;
     previousMouseHeld = mHold;
 
+    bool zoomButtonPressed = false;
+    if (mPressed && combo) {
+        const int buttonX = 20;
+        const int buttonY = 20;
+        const int buttonWidth = 60;
+        const int buttonHeight = 80;
+
+        if (pressX >= buttonX && pressX <= buttonX + buttonWidth &&
+            pressY >= buttonY && pressY <= buttonY + buttonHeight) {
+            flagZoom = !flagZoom;
+            if (flagZoom) {
+                flagZoomOut = false;
+            }
+            zoomButtonPressed = true;
+        } else {
+            const int zoomOutY = buttonY + buttonHeight + 10;
+            if (pressX >= buttonX && pressX <= buttonX + buttonWidth &&
+                pressY >= zoomOutY && pressY <= zoomOutY + buttonHeight) {
+                flagZoomOut = !flagZoomOut;
+                if (flagZoomOut) {
+                    flagZoom = false;
+                }
+                zoomButtonPressed = true;
+            }
+        }
+    }
+
     if (mPressed && !flagZoom && !flagZoomOut) {
         startPanX = pressX;
         startPanY = pressY;
@@ -83,18 +86,18 @@ bool Display::onCursorUpdate(float elapsedTime) {
         ///update
         startPanX = pressX;
         startPanY = pressY;
-       // printf("Hold Press: offsetX: %f, offsetY: %f\n", offsetX, offsetY);
+        //printf("Hold Press: offsetX: %f, offsetY: %f\n", offsetX, offsetY);
     }
 
     float mouseWorldX_beforeZoom, mouseWorldY_beforeZoom;
     ScreenToWorld((int)pressX, (int)pressY, mouseWorldX_beforeZoom, mouseWorldY_beforeZoom);
-    if(flagZoom && mPressed){
+    if (flagZoom && mPressed && !zoomButtonPressed) {
         scaleX += 0.25f;
         scaleY += 0.25f;
     }
-    if(flagZoomOut && mPressed){
-        scaleX -= 0.25f;
-        scaleY -= 0.25f;
+    if (flagZoomOut && mPressed && !zoomButtonPressed) {
+        scaleX = scaleX > 0.25f ? scaleX - 0.25f : 0.25f;
+        scaleY = scaleY > 0.25f ? scaleY - 0.25f : 0.25f;
     }
 
     float mouseWorldX_afterZoom, mouseWorldY_afterZoom;
@@ -103,47 +106,206 @@ bool Display::onCursorUpdate(float elapsedTime) {
     offsetX += (mouseWorldX_beforeZoom - mouseWorldX_afterZoom);
     offsetY += (mouseWorldY_beforeZoom - mouseWorldY_afterZoom);
 
+
     return true;
 }
 
-/*
-    @Brief foloseste coord din stanga sus si lungimea + latimea 
-    sa deseneze dreptunghiul de culoarea color 
-*/
-void Display::drawRectangle1(int x, int y, int width, int height, vex::color color) {
-    screen.clearScreen(); ///POATE E REDUNDANT, am adaugat direct in userUpdate clearScreen
+void Display::clearScreen(){
+    screen.clearScreen();
+}
+
+// float f[9] = {1, 3.5, 300, 5, 6, 9, 100, 22};
+// float t[9] = {0, 1, 2, 60, 70, 90, 200, 240};
+float f[5] = {100, -50, 60, 200, 150};
+float t[5] = {0, 240, 250, 300, 380};
+float t2[100];
+float f2[100];
+
+void Display::renderScreen(){
+    clearScreen();
+    drawAxes();
+    if (combo) {
+            butonZoom(VexLib::Pose2D(20, 20), 80, 60);
+            tastatura();
+    } else {
+        flagZoom = false;
+        flagZoomOut = false;
+        tastaturaPreviousVisible = false;
+        tastaturaPreviousPressing = false;
+    }
+    for(int i = 0; i < 100; i++){
+        t2[i] = i*4;
+        f2[i] = 50 * sin(i * 0.1);
+    }
+    drawFunction(f2, t2, 100, vex::color::red);
+    drawFunction(f, t, 5, vex::color::yellow);
+    
+}
+
+void Display::drawRectangle(int x, int y, int width, int height, vex::color color) {
+    // float sx = 0, sy = 0; float lx = 5, ly = 10;
+	// int pixel_sx, pixel_sy; int pixel_lx, pixel_ly;
+
+    // sx = 100; sy = 100;
+    // WorldToScreen(sx, sy, pixel_sx, pixel_sy);
+    // WorldToScreen(lx, ly, pixel_lx, pixel_ly);
+
+    // int rectangleX = pixel_sx < pixel_lx ? pixel_sx : pixel_lx;
+    // int rectangleY = pixel_sy < pixel_ly ? pixel_sy : pixel_ly;
+    // int rectangleWidth = pixel_sx < pixel_lx ? pixel_lx - pixel_sx : pixel_sx - pixel_lx;
+    // int rectangleHeight = pixel_sy < pixel_ly ? pixel_ly - pixel_sy : pixel_sy - pixel_ly;
+    // drawRectangle(rectangleX, rectangleY, rectangleWidth, rectangleHeight, vex::color::blue);
+
+
+
+    //screen.clearScreen(); ///POATE E REDUNDANT, am adaugat direct in userUpdate clearScreen
     screen.setPenColor(color);
     screen.drawRectangle(x, y, width, height);
     screen.setFillColor(color);
+    // if(flagHamburger != true){
+    //     screen.render();
+    // }
 }
 
-/*
-    @Brief foloseste coord din stanga sus si coord din dreapta jos 
-    sa deseneze dreptunghiul de culoarea color
-*/
-void Display::drawRectangle2(int x1, int y1, int x2, int y2, vex::color color) {
-    int width = x2 - x1;
-    int height = y2 - y1;
-    Display::drawRectangle1(x1, y1, width, height, color);
+void Display::drawLine(float sx1, float sy1, float sx2, float sy2, vex::color color){
+    int pixel_sx1, pixel_sx2, pixel_sy1, pixel_sy2;
+    WorldToScreen(sx1, sy1, pixel_sx1, pixel_sy1);
+    WorldToScreen(sx2, sy2, pixel_sx2, pixel_sy2);
+
+    //screen.clearScreen();
+    screen.setPenColor(color);
+    screen.drawLine(pixel_sx1, pixel_sy1, pixel_sx2, pixel_sy2);
+    // if(flagHamburger != true){
+    //     screen.render();
+    // }
 }
+
 
 bool Display::onUserCreate() {
-    offsetX = -120;
+    offsetX = -60;
     offsetY = -60;
     return true;
 }
 
-bool Display::onUserUpdate(float elapsedTime) {
-    float sx = 0, sy = 0; float lx = 5, ly = 10;
-	int pixel_sx, pixel_sy; int pixel_lx, pixel_ly;
+void Display::drawAxes(){
+    float sx1 = 0, sy1 = 0;
+    float sx2 = 0, sy2 = 270;
+    drawLine(sx1, sy1, sx2, sy2, vex::color::white);
+    float sx1_2 = 0, sy1_2 = 135;
+    float sx2_2 = 480, sy2_2 = 135;
+    drawLine(sx1_2, sy1_2, sx2_2, sy2_2, vex::color::white);
+}
 
-    sx = 100; sy = 100;
-    WorldToScreen(sx, sy, pixel_sx, pixel_sy);
-    WorldToScreen(lx, ly, pixel_lx, pixel_ly);
-    
-    //screen.clearScreen(); /// CU DOUBLE BUFFERING NU MAI E NEVOIE DE CLEARSCREEN
-    drawRectangle2(pixel_sx, pixel_sy, pixel_lx, pixel_ly, vex::color::blue);
-    
+
+void Display::drawFunction(float (*func), float (*time), int lungime, vex::color color){
+    for(int i = 0; i < lungime - 1; i++){
+        float t1 = time[i];
+        float t2 = time[i + 1];
+        float y1 = func[i];
+        float y2 = func[i + 1];
+        printf("i = %d \t t1: %f, y1: %f, t2: %f, y2: %f\n", i, t1, y1, t2, y2);
+        Display::drawLine(t1, -y1 + 135, t2, -y2 + 135, color);
+    }
+}
+
+
+//---------------------------
+
+bool Display::onUserUpdate(float elapsedTime, vex::controller cntrler) {
+    if (cntrler.ButtonX.pressing() && cntrler.ButtonY.pressing() &&
+        cntrler.ButtonA.pressing() && cntrler.ButtonB.pressing()) {
+        if (!flagHamburger) {
+            combo = !combo;
+            flagHamburger = true;
+        }
+    } else {
+        flagHamburger = false;
+    }
+    ///combo se comporta ca un switch
+
     onCursorUpdate(elapsedTime);
     return true;
+}
+
+void Display::tastatura(){
+
+    const int keyboardX = 150;
+    const int keyboardY = 25;
+    const int buttonWidth = 55;
+    const int buttonHeight = 40;
+    const int gap = 5;
+    const char* keys[4][3] = {
+        {"7", "8", "9"},
+        {"4", "5", "6"},
+        {"1", "2", "3"},
+        {".", "0", "Ent"}
+    };
+
+    if (!tastaturaPreviousVisible) {
+        tastaturaText.clear();
+        tastaturaEnterPressed = false;
+    }
+
+    int pressX = screen.xPosition();
+    int pressY = screen.yPosition();
+    bool pressing = screen.pressing();
+    bool pressed = pressing && !tastaturaPreviousPressing;
+
+    if (pressed) {
+        for (int row = 0; row < 4; ++row) {
+            for (int column = 0; column < 3; ++column) {
+                int buttonX = keyboardX + column * (buttonWidth + gap);
+                int buttonY = keyboardY + row * (buttonHeight + gap);
+                bool insideButton = pressX >= buttonX && pressX <= buttonX + buttonWidth &&
+                    pressY >= buttonY && pressY <= buttonY + buttonHeight;
+
+                if (!insideButton) {
+                    continue;
+                }
+
+                const std::string key = keys[row][column];
+                if (key == ".") {
+                    if (tastaturaText.find('.') == std::string::npos) {
+                        tastaturaText += key;
+                    }
+                } else if (key == "Ent") {
+                    tastaturaEnterPressed = true;
+                    combo = false;
+                } else {
+                    tastaturaText += key;
+                    tastaturaEnterPressed = false;
+                }
+            }
+        }
+    }
+
+    screen.setPenColor(vex::color::white);
+    screen.setFillColor(vex::color::black);
+    screen.drawRectangle(keyboardX - gap, keyboardY - 22,
+        3 * buttonWidth + 2 * gap + 2 * gap, 4 * buttonHeight + 3 * gap + 30);
+    screen.printAt(keyboardX, keyboardY - 5, false, "%s", tastaturaText.c_str());
+
+    for (int row = 0; row < 4; ++row) {
+        for (int column = 0; column < 3; ++column) {
+            int buttonX = keyboardX + column * (buttonWidth + gap);
+            int buttonY = keyboardY + row * (buttonHeight + gap);
+            screen.setFillColor(vex::color::blue);
+            screen.drawRectangle(buttonX, buttonY, buttonWidth, buttonHeight);
+            screen.setPenColor(vex::color::white);
+            screen.printAt(buttonX + buttonWidth / 2 - 5, buttonY + buttonHeight / 2 + 5,
+                false, "%s", keys[row][column]);
+        }
+    }
+
+    tastaturaPreviousPressing = pressing;
+    tastaturaPreviousVisible = true;
+
+}
+
+const std::string& Display::getTastaturaText() const {
+    return tastaturaText;
+}
+
+bool Display::tastaturaAConfirmat() const {
+    return tastaturaEnterPressed;
 }
