@@ -19,7 +19,7 @@ void Display::butonZoom(VexLib::Pose2D pos, int btnHeight, int btnWidth) {
 
     Brain.Screen.drawRectangle(buttonX, buttonY, btnWidth, btnHeight, btnColor);
     Brain.Screen.setFillColor(btnColor);
-    Brain.Screen.printAt(pos.getX(VexLib::DistanceUnits::mm) + btnWidth / 2 - 10, pos.getY(VexLib::DistanceUnits::mm) + btnHeight / 2, "+");
+    Brain.Screen.printAt(pos.getX(VexLib::DistanceUnits::mm) + btnWidth / 2 - 10, pos.getY(VexLib::DistanceUnits::mm) + btnHeight / 2, "Zum");
 
     ///ZOOM OUT BUTTON
     int zoomOutX = pos.getX(VexLib::DistanceUnits::mm);
@@ -28,7 +28,7 @@ void Display::butonZoom(VexLib::Pose2D pos, int btnHeight, int btnWidth) {
 
     Brain.Screen.drawRectangle(zoomOutX, zoomOutY, btnWidth, btnHeight, zoomOutColor);
     Brain.Screen.setFillColor(zoomOutColor);
-    Brain.Screen.printAt(zoomOutX + btnWidth / 2 - 10, zoomOutY + btnHeight / 2, "-");
+    Brain.Screen.printAt(zoomOutX + btnWidth / 2 - 10, zoomOutY + btnHeight / 2, "Zom");
 }
 
 void Display::WorldToScreen(float worldX, float worldY, int &screenX, int &screenY, VexLib::DistanceUnits unit) {
@@ -92,12 +92,12 @@ bool Display::onCursorUpdate(float elapsedTime) {
     float mouseWorldX_beforeZoom, mouseWorldY_beforeZoom;
     ScreenToWorld((int)pressX, (int)pressY, mouseWorldX_beforeZoom, mouseWorldY_beforeZoom);
     if (flagZoom && mPressed && !zoomButtonPressed) {
-        scaleX += 0.125f;
-        scaleY += 0.125f;
+        scaleX += 0.25f;
+        scaleY += 0.25f;
     }
     if (flagZoomOut && mPressed && !zoomButtonPressed) {
-        scaleX = scaleX > 0.125f ? scaleX - 0.125f : 0.125f;
-        scaleY = scaleY > 0.125f ? scaleY - 0.125f : 0.125f;
+        scaleX = scaleX > 0.25f ? scaleX - 0.25f : 0.25f;
+        scaleY = scaleY > 0.25f ? scaleY - 0.25f : 0.25f;
     }
 
     float mouseWorldX_afterZoom, mouseWorldY_afterZoom;
@@ -123,7 +123,7 @@ void Display::renderScreen(){
     drawAxes();
         
     if (combo) {  ///combo se comporta ca un switch ptr. Hamburger
-            butonZoom(VexLib::Pose2D(5, 5), 30, 30);
+            butonZoom(VexLib::Pose2D(20, 20), 80, 60);
             tastatura();
     } else {
         flagZoom = false;
@@ -136,34 +136,29 @@ void Display::renderScreen(){
         f2[i] = 50 * sin(i * 0.1);
     }
     drawFunction(f2, t2, 100, vex::color::red);
-    //drawFunction(f, t, 5, vex::color::yellow);
+    drawFunction(f, t, 5, vex::color::yellow);
 
     //screen.render(true);
 }
 
 void Display::drawRectangle(int x, int y, int width, int height, vex::color color) {
-	int pixel_sx, pixel_sy; int pixel_lx, pixel_ly;
+    // float sx = 0, sy = 0; float lx = 5, ly = 10;
+	// int pixel_sx, pixel_sy; int pixel_lx, pixel_ly;
 
-    WorldToScreen(x, y, pixel_sx, pixel_sy);
-    
-    int rectangleWidth = (int)(std::abs(width * scaleX));
-    int rectangleHeight = (int)(std::abs(height * scaleY));
+    // sx = 100; sy = 100;
+    // WorldToScreen(sx, sy, pixel_sx, pixel_sy);
+    // WorldToScreen(lx, ly, pixel_lx, pixel_ly);
 
-    screen.setPenColor(color);
-    screen.setFillColor(color);
-    screen.drawRectangle(pixel_sx, pixel_sy, rectangleWidth, rectangleHeight);
-}
+    // int rectangleX = pixel_sx < pixel_lx ? pixel_sx : pixel_lx;
+    // int rectangleY = pixel_sy < pixel_ly ? pixel_sy : pixel_ly;
+    // int rectangleWidth = pixel_sx < pixel_lx ? pixel_lx - pixel_sx : pixel_sx - pixel_lx;
+    // int rectangleHeight = pixel_sy < pixel_ly ? pixel_ly - pixel_sy : pixel_sy - pixel_ly;
+    // drawRectangle(rectangleX, rectangleY, rectangleWidth, rectangleHeight, vex::color::blue);
 
-void Display::drawCircle(int xCentre, int yCentre, int radius, vex::color color){
-    int pixel_xCentre, pixel_yCentre, pixel_radius, temp;
-    WorldToScreen(xCentre, yCentre, pixel_xCentre, pixel_yCentre);
-
-    int printingRadius = (int)(std::abs(radius * scaleX)); // doar daca scaleX = scaleY
 
     screen.setPenColor(color);
+    screen.drawRectangle(x, y, width, height);
     screen.setFillColor(color);
-    screen.drawCircle(pixel_xCentre, pixel_yCentre, printingRadius);
-
 }
 
 void Display::drawLine(float sx1, float sy1, float sx2, float sy2, vex::color color){
@@ -187,18 +182,17 @@ void Display::drawAxes(){
     float sx1 = 0, sy1 =  135 - dimensiuneAxaY / 2;
     float sx2 = 0, sy2 = dimensiuneAxaY;
     drawLine(sx1, sy1, sx2, sy2, vex::color::white);
-    float sx1_2 =-60, sy1_2 = dimensiuneAxaY / 2;
-    float sx2_2 = dimensiuneAxaX, sy2_2 = dimensiuneAxaY / 2;
+    float sx1_2 =-60, sy1_2 = 135;
+    float sx2_2 = dimensiuneAxaX, sy2_2 = 135;
     drawLine(sx1_2, sy1_2, sx2_2, sy2_2, vex::color::white);
 }
 
-float scaleFctY, scaleFctX;
+
 void Display::drawFunction(float (*func), float (*time), int lungime, vex::color color){
-    float maxTime = time[lungime - 1];
-    if(maxTime > dimensiuneAxaX){
-        dimensiuneAxaX = maxTime + 40;
+    if(lungime > dimensiuneAxaX){
+        dimensiuneAxaX = lungime + 40; //cu surplus de 20
     }
-    scaleFctX = scaleFctY = 480.0f / maxTime;
+    scaleX = scaleY = lungime / 480.0f;
     for(int i = 0; i < lungime - 1; i++){
         float t1, t2, y1, y2;
         t1 = time[i];
@@ -208,11 +202,11 @@ void Display::drawFunction(float (*func), float (*time), int lungime, vex::color
         if(abs(y1) * 2 > dimensiuneAxaY){ //|| abs(y2) * 2 > dimensiuneAxaY){
             dimensiuneAxaY = abs(y1) * 2 + 40;  //cu surplus de 20 pe fiecare cadran
         }
-        if(maxTime < 480){
-            t1 = t1 * scaleFctX;
-            t2 = t2 * scaleFctX;
-            y2 = y2 * scaleFctY;
-            y1 = y1 * scaleFctY;
+        if(lungime < 480){
+            t1 = t1 * scaleX;
+            t2 = t2 * scaleX;
+            y2 = y2 * scaleY;
+            y1 = y1 * scaleY;
         }
         Display::drawLine(t1, -y1 + dimensiuneAxaY / 2, t2, -y2 + dimensiuneAxaY / 2, color);
     }
@@ -247,7 +241,7 @@ void Display::tastatura(){
         {"7", "8", "9", "<"},
         {"4", "5", "6", ""},
         {"1", "2", "3", ""},
-        {".", "0", "Ent", ""}
+        {".", "0", "⏎", ""}
     };
 
     if (!tastaturaPreviousVisible) {
@@ -279,7 +273,7 @@ void Display::tastatura(){
                     if (tastaturaText.find('.') == std::string::npos) {
                         tastaturaText += key;
                     }
-                } else if (key == "Ent") {
+                } else if (key == "⏎") {
                     tastaturaEnterPressed = true;
                     combo = false;
                 } else if (key == "<") {

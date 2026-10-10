@@ -34,7 +34,6 @@ public:
     void ScreenToWorld(int screenX, int screenY, float &worldX, float &worldY, VexLib::DistanceUnits unit = VexLib::DistanceUnits::mm);
     bool onCursorUpdate(float elapsedTime);
     void drawRectangle(int x, int y, int width, int height, vex::color color);
-    void drawCircle(int xCentre, int yCentre, int radius, vex::color color);
     void drawLine(float sx1, float sy1, float sx2, float sy2, vex::color color);
     void drawAxes();
     //void drawFunction(float (*func)(float), float (*time)(float), vex::color color);

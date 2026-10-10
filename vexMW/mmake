@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+(
+
+export PATH="/home/cosmin/.config/Code/User/globalStorage/vexrobotics.vexcode/sdk/cpp/V5/V5_20240802_15_00_00:/home/cosmin/.config/Code/User/globalStorage/vexrobotics.vexcode/tools/cpp/toolchain_linux64/gcc/bin:/home/cosmin/.config/Code/User/globalStorage/vexrobotics.vexcode/tools/cpp/toolchain_linux64/clang/bin:$PATH"
+make T="/home/cosmin/.config/Code/User/globalStorage/vexrobotics.vexcode/sdk/cpp/V5/V5_20240802_15_00_00" P="LorisMW"
+
+)
