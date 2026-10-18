@@ -1,7 +1,7 @@
-#include "PID.hpp"
-#include "Units.hpp"
-#include "VexLib.hpp"
-#include "math.hpp"
+#include "VexLib/PID.hpp"
+#include "VexLib/Units.hpp"
+#include "VexLib/VexLib.hpp"
+#include "VexLib/math.hpp"
 
 VexLib::PIDFController::PIDFController(VexLib::PIDFCoefficients pidfc):
 		coeff{pidfc}, Isum{0}, minSO{-1}, maxSO{1}, frequency{50}{}

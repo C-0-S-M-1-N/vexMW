@@ -1,4 +1,4 @@
-#include "EventQueue.hpp"
+#include "VexLib/EventQueue.hpp"
 #include <functional>
 
 using VexLib::Event;

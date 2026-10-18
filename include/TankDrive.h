@@ -1,10 +1,10 @@
 #ifndef TankDrive_h
 #define TankDrive_h
-#include "Paths.hpp"
+#include "VexLib/Paths.hpp"
 #include "vex.h"
-#include "PID.hpp"
-#include "Units.hpp"
-#include "Localizer.hpp"
+#include "VexLib/PID.hpp"
+#include "VexLib/Units.hpp"
+#include "VexLib/Localizer.hpp"
 #include "vex_motorgroup.h"
 
 

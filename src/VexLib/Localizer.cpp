@@ -1,6 +1,6 @@
-#include "Localizer.hpp"
-#include "Units.hpp"
-#include "VexLib.hpp"
+#include "VexLib/Localizer.hpp"
+#include "VexLib/Units.hpp"
+#include "VexLib/VexLib.hpp"
 #include <cmath>
 
 namespace VexLib{

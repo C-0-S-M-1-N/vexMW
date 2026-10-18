@@ -1,6 +1,6 @@
-#include "Localizer.hpp"
-#include "Motion.hpp"
-#include "VexLib.hpp"
+#include "VexLib/Localizer.hpp"
+#include "VexLib/Motion.hpp"
+#include "VexLib/VexLib.hpp"
 #include "vex.h"
 #include "TankDrive.h"
 #include <algorithm>

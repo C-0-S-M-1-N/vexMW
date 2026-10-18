@@ -1,6 +1,5 @@
-#include "Paths.hpp"
-#include "Localizer.hpp"
-#include <algorithm>
+#include "VexLib/Paths.hpp"
+#include "VexLib/Localizer.hpp"
 #include <cerrno>
 #include <cmath>
 #include <cstddef>
