@@ -37,14 +37,16 @@ void TwoWheelLocalizer::update(){
 	using std::cos;
 	Pose2D currentPos = this->getEstimatedPose();
 	double heading = getAngle(VexLib::AngleUnits::rad);
-	double dH = heading - currentPos.h;
-	double strf = getDY(CDU) - parallelWheelPos.getX(CDU) * dH;
+	double dH = heading - currentPos.getH(VexLib::rad);
 
+	while(dH < -M_PI) dH += 2 * M_PI;
+	while(dH > M_PI) dH -= 2 * M_PI;
+
+	double strf = getDY(CDU) + parallelWheelPos.getX(CDU) * dH;
 	double fwd = getDX(CDU) - perpendicularWheelPos.getX(CDU) * dH;
 	Pose2D dpose;
-			
-
-	if(fabs(heading) <= VexLib::convertAngles(VexLib::AngleUnits::deg, CAU, 0.3) || 1){
+	
+	if(fabs(dH) <= VexLib::convertAngles(VexLib::AngleUnits::deg, CAU, 1) || 1){
 		// linear estimation for near linear movement
 		dpose = Pose2D(
 				fwd * cos(heading) - strf * sin(heading),
@@ -55,13 +57,9 @@ void TwoWheelLocalizer::update(){
 		);
 	} else {
 		// 2nd order estimation (asume constant velocity on both movement and spin)
-
-		double cosIntegral = sin(heading) - sin(dH);
-		double sinIntegral = cos(dH) - cos(heading);
-
 		dpose = Pose2D(
-				fwd / dH * cosIntegral - strf / dH * sinIntegral,
-				fwd / dH * sinIntegral + strf / dH * cosIntegral,
+				fwd / dH * sin(dH) - strf / dH * (1 - cos(dH)),
+				fwd / dH * (1 - cos(dH)) + strf / dH * sin(dH),
 				dH,
 				CDU,
 				VexLib::AngleUnits::rad
@@ -116,7 +114,7 @@ void TwoWheelLocalizer::update(){
  * to get dx and dy we will integrate from 0 to T in order to get the current distances that the bot made since last looptime (remember that everything is in reference to the last frame)
  *
  * dx(dt) = dFwd / dt * dt / dH * sin(dH/dt * t + heading) - dLat / dt * dt / dH * cos(dH / dt * t + heading) from 0 to dt
- * dx(dt) = dFwd / dH * (sin(dH/dt * T + heading) - sin(heading)) - dLat / dH * (cos(dH / dt * T + heading) + cos(heading))
+ * dx(dt) = dFwd / dH * (-cos(dH/dt * T + heading) + cos(heading)) + dLat / dH * (cos(dH / dt * T + heading) - cos(heading))
  * analog for dy
  *
  * * * * * higher order estimations * * * * *

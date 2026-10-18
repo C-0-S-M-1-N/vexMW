@@ -1,4 +1,6 @@
 #include "Localizer.hpp"
+#include "Motion.hpp"
+#include "VexLib.hpp"
 #include "vex.h"
 #include "TankDrive.h"
 #include <algorithm>
@@ -42,6 +44,12 @@ void TankDrive::setFollowingPath(VexLib::Path* p){
 void TankDrive::updateAutonomousDrive(){
 	Pose2D follow = PathFollowerVector();
 	
+	double angle = std::atan2(follow.y, follow.x);
+	double rot = HeadingController.getPowerOutput(angle-localizer->getEstimatedPose().h);
+	double fwd = kV * 500 * std::hypot(follow.x, follow.y);
+	fwd += kStatic;
+	if(follow.x == 0 && follow.y == 0) rot = 0, fwd = 0;
+	drive(fwd, rot);
 
 }
 
@@ -61,6 +69,10 @@ Pose2D TankDrive::PathFollowerVector(){
 
 	double weight = std::exp(-dist * dist / (pullRadius * pullRadius));
 	double attraction = std::min(dist / pullRadius, 1.0);
+
+	if((t >= 1 - 1e-6) &&  // past the end
+			(localizer->getEstimatedPose() - closePt).x * d.x +  // we go away from the curve
+			(localizer->getEstimatedPose() - closePt).y * d.y > 0) weight = 0, attraction = 0;
 	
 	Pose2D help = localizer->getEstimatedPose() - closePt;
 	if(t >= 1 - 1e-6 && 

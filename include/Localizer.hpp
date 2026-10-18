@@ -23,6 +23,7 @@ typedef struct Pose2D {
 Pose2D operator -(const Pose2D&, const Pose2D&);
 Pose2D operator +(const Pose2D&, const Pose2D&);
 Pose2D operator *(const Pose2D&, double);
+Pose2D operator *(double, const Pose2D&);
 Pose2D operator /(const Pose2D&, double);
 double getDistance(const Pose2D& a, const Pose2D& b);
 
@@ -30,6 +31,7 @@ double getDistance(const Pose2D& a, const Pose2D& b);
 class Localizer {
 protected:
 	Pose2D lastPose;
+	double lastTime;
 public:
 
 	Localizer() = default;

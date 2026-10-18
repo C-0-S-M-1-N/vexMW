@@ -21,9 +21,11 @@ timeParam getTimes(double A, double D, double& MV, double dist){
 double getTrapezoidalAcceleration(double Acceleration, double Decceleration, double MaxVelocity, double startPos, double endPos, double t){
 	timeParam times = getTimes(Acceleration, Decceleration, MaxVelocity, std::abs(startPos - endPos));
 	
-	if(t < times.tA) return Acceleration;
+	double sgn = startPos > endPos ? -1 : 1;
+
+	if(t < times.tA) return Acceleration * sgn;
 	if(t - times.tA < times.tC) return 0;
-	if(t - times.tA - times.tC < times.tD) return Decceleration;
+	if(t - times.tA - times.tC < times.tD) return -Decceleration * sgn;
 
 	return 0;
 }
@@ -31,10 +33,11 @@ double getTrapezoidalAcceleration(double Acceleration, double Decceleration, dou
 double getTrapezoidalVelocity(double Acceleration, double Decceleration, double MaxVelocity, double startPos, double endPos, double t){
 	timeParam times = getTimes(Acceleration, Decceleration, MaxVelocity, std::abs(startPos - endPos));
 
+	double sgn = startPos > endPos ? -1 : 1;
 
-	if(t < times.tA) return Acceleration * t;
-	if(t - times.tA < times.tC) return MaxVelocity;
-	if(t - times.tA - times.tC < times.tD) return MaxVelocity - Decceleration * (t - times.tA - times.tC);
+	if(t < times.tA) return Acceleration * t * sgn;
+	if(t - times.tA < times.tC) return MaxVelocity * sgn;
+	if(t - times.tA - times.tC < times.tD) return (MaxVelocity - Decceleration * (t - times.tA - times.tC)) * sgn;
 
 	return 0;
 }
@@ -47,15 +50,15 @@ double getTrapezoidalPosition(double Acceleration, double Decceleration, double 
 	
 	double ret = 0;
 
-	if(t < times.tA) return Acceleration / 2 * t * t * sgn;
+	if(t < times.tA) return Acceleration / 2 * t * t * sgn + startPos;
 
 	ret += Acceleration * times.tA * times.tA / 2 * sgn;
 
-	if(t - times.tA < times.tC) return MaxVelocity * (t - times.tA) * sgn + ret;
+	if(t - times.tA < times.tC) return MaxVelocity * (t - times.tA) * sgn + ret + startPos;
 	
 
 	if(t - times.tA - times.tC < times.tD) 
-			return ret + MaxVelocity * (t - times.tA) * sgn - Decceleration * sgn / 2.0 * (t - times.tA - times.tC) * (t - times.tA - times.tC);
+			return ret + MaxVelocity * (t - times.tA) * sgn - Decceleration * sgn / 2.0 * (t - times.tA - times.tC) * (t - times.tA - times.tC) + startPos;
 
 	return endPos;
 }

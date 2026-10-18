@@ -29,6 +29,10 @@ void Pose2D::rotateBy(VexLib::AngleUnits a, double angle){
 	y = sx * sin(angle) + sy * cos(angle);
 }
 
+Pose2D operator* (double a, const Pose2D& p){
+	return p * a;
+}
+
 Pose2D operator -(const Pose2D& a, const Pose2D& b){
 	return Pose2D (
 		a.x - convertDistance(b.distUnit, a.distUnit, b.x),
@@ -69,10 +73,11 @@ Pose2D operator /(const Pose2D& a, double f){
 }
 
 Pose2D Localizer::getEstimatedVelocity(DistanceUnits d, TimeUnits t, AngleUnits a){
-	return (getEstimatedPose() - lastPose) / getElapsedTime(TimeUnits::s);
+	return (getEstimatedPose() - lastPose) / (getElapsedTime(TimeUnits::s) - lastTime);
 }
 
 void Localizer::setPosition(const Pose2D& pose){
+	lastTime = getElapsedTime(TimeUnits::s);
 	lastPose = pose;
 }
 

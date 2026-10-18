@@ -4,7 +4,7 @@
 #include "math.hpp"
 
 VexLib::PIDFController::PIDFController(VexLib::PIDFCoefficients pidfc):
-		coeff{pidfc}, Isum{0}, minSO{0}, maxSO{0}, frequency{50}{}
+		coeff{pidfc}, Isum{0}, minSO{-1}, maxSO{1}, frequency{50}{}
 
 void VexLib::PIDFController::setControllerFrequency(double f){ frequency = f; }
 

@@ -10,8 +10,11 @@
 
 class TankDrive {
     /* Autonomous parameters */
-    VexLib::PIDFController HeadingController = VexLib::PIDFController({1.2, 0, 0, 0});
-	VexLib::PIDFController TranslationalController = VexLib::PIDFController({0, 0, 0, 0});
+    VexLib::PIDFController HeadingController = VexLib::PIDFController({1.2, 0.002, 0, 0});
+	VexLib::PIDFController TranslationalController = VexLib::PIDFController({0.01, 0, 0, 0});
+	double kV = 0.0035
+		 , kA = 0.000
+		 , kStatic = 0.021;
 
 	VexLib::Path* currentPath;
 	VexLib::Localizer* localizer;
@@ -50,6 +53,9 @@ public:
 
 	// Set the path that the drivetrain will follow
 	void setFollowingPath(VexLib::Path*);
+	double dt = 0;
+	double ep;
+	double sp;
 
 };
 
