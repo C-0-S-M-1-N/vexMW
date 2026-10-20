@@ -7,9 +7,9 @@ namespace VexLib{
 	
 TwoWheelLocalizer::TwoWheelLocalizer(const Pose2D& paralelWheelPosition, 
 					  const Pose2D& perpendicularWheelPosition, 
-					  std::function<double(AngleUnits)> getangle,
-					  std::function<double(DistanceUnits)> getdX,
-					  std::function<double(DistanceUnits)> getdY):
+					  const std::function<double(AngleUnits)>& getangle,
+					  const std::function<double(DistanceUnits)>& getdX,
+					  const std::function<double(DistanceUnits)>& getdY):
 		parallelWheelPos{paralelWheelPosition},
 		perpendicularWheelPos{perpendicularWheelPosition},
 		getAngle{std::move(getangle)},

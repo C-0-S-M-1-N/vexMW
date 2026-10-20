@@ -24,9 +24,9 @@ public:
 	 * */
 	TwoWheelLocalizer(const Pose2D& paralelWheelDistFromCenter, 
 					  const Pose2D& perpendicularWheelDistFromCenter, 
-					  std::function<double(AngleUnits)> getAngle,
-					  std::function<double(DistanceUnits)> getDX,
-					  std::function<double(DistanceUnits)> getDY);
+					  const std::function<double(AngleUnits)> &getAngle,
+					  const std::function<double(DistanceUnits)> &getDX,
+					  const std::function<double(DistanceUnits)> &getDY);
 
 	Pose2D getEstimatedPose(DistanceUnits = mm, AngleUnits = rad);
 	
