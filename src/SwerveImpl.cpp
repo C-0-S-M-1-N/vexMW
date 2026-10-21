@@ -1,5 +1,6 @@
 #include "SwerveImpl.hpp"
 #include "VexLib/Localizer.hpp"
+#include "VexLib/PID.hpp"
 #include "vex_brain.h"
 #include "vex_units.h"
 #include <algorithm>
@@ -9,9 +10,9 @@ using VexLib::Pose2D;
 
 extern float VOLTAGE;
 
-DiffyPod::DiffyPod(int32_t P1, int32_t P2):
+DiffyPod::DiffyPod(int32_t P1, int32_t P2, const VexLib::PIDFCoefficients& pidc):
 		M1(P1), M2(P2),
-		pid({1.5, 0.000, 0.03, 0})
+		pid(pidc)
 {
 	yaw = 0;
 	invert = false;

@@ -23,7 +23,7 @@ class DiffyPod {
 public:
 	vex::motor M1, M2;
 	VexLib::PIDFController pid;
-	DiffyPod(int32_t P1, int32_t P2);
+	DiffyPod(int32_t P1, int32_t P2, const VexLib::PIDFCoefficients& pidc = {1.5, 0, 0.03, 0});
 	
 	void setVect(const VexLib::Pose2D& p);
 	void update();

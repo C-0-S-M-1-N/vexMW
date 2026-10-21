@@ -50,7 +50,7 @@ int main(){
 	
 	while(1){
 		Brain.Screen.clearScreen();
-		swerve.drive(Pose2D(c1.Axis3.value() / 100.0, -c1.Axis4.value() / 100.0, c1.Axis1.value() / 100.0 * 0.2));
+		swerve.drive(Pose2D(c1.Axis3.value(), -c1.Axis4.value(), c1.Axis1.value()));
 
 		wait(67, vex::msec);
 		
