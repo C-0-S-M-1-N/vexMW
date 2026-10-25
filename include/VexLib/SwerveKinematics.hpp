@@ -7,16 +7,17 @@
 
 namespace VexLib{
 
-
+/**
+ * @brief Swerve kinematics for any number of wheels
+ * */
 class Swerve {
 
 	std::vector<Pose2D> podPositions;
 	std::vector<std::function<void(Pose2D)>> setPodParam;
-	Pose2D* commands;
-
+	std::vector<Pose2D> commands;
 public:
 
-	/* @Brief constructor for a swerve drive (any type)
+	/** @brief constructor for a swerve drive (any type)
 	 * @param podPosition a vector that gives the coordonates of each pod inside the chsssis frame of reference (with the center of rotation at (0, 0))
 	 * @param setPodParam a vector of functions that sets the velocity of each pod by a given vector in the chassis frame of reference
 	 *
@@ -27,14 +28,14 @@ public:
 	);
 	
 
-	/*
-	 * @Brief sets up the kinematics for each pod and calls each pod with its respective vector
+	/**
+	 * @brief sets up the kinematics for each pod and calls each pod with its respective vector
 	 *
 	 * @param dir the velocity vector that the whole chassis follows
 	 * */
 	void drive(const Pose2D& dir);
-	~Swerve();
-
+	const std::vector<Pose2D>& getDebugCommands() const;
+	
 };
 
 }; // namepsace VexLib

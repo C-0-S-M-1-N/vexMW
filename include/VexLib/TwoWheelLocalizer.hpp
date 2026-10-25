@@ -7,6 +7,12 @@
 
 namespace VexLib{
 
+
+/**
+ * @brief Implementation of a Localizer using 2 odometry pods placed perpendicular and parallel to the chassis
+ *
+ * */
+
 class TwoWheelLocalizer: public Localizer {
 	Pose2D parallelWheelPos, perpendicularWheelPos;
 	std::function<double(AngleUnits)> getAngle;	
@@ -14,7 +20,7 @@ class TwoWheelLocalizer: public Localizer {
 	std::function<double(DistanceUnits)> getDY;
 
 public:
-	/* 
+	/** 
 	 * @brief constructor for two wheel localizer (note: use only the x coord for measurements)
 	 * @param paralelWheelPosition position of the paralel wheel based on the center of rotation
 	 * @param perpendicularWheelPosition position of the perpendicular wheel based on the center of rotation

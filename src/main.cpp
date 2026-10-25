@@ -2,7 +2,7 @@
 #include <iostream>
 #include "SwerveImpl.hpp"
 #include "VexLib/Localizer.hpp"
-#include "VexLib/Swerve.hpp"
+#include "VexLib/SwerveKinematics.hpp"
 #include "VexLib/Units.hpp"
 #include "VexLib/VexLib.hpp"
 #include "vex.h"
@@ -28,8 +28,13 @@ int main(){
 	p2 = new DiffyPod(vex::PORT3, vex::PORT4);
 	p3 = new DiffyPod(vex::PORT5, vex::PORT6);
 
+	Pose2D P1(120, 0);
+	Pose2D P2 = P1, P3 = P1;
+	P2.rotateBy(VexLib::deg, 120);
+	P3.rotateBy(VexLib::deg, 60);
+
 	VexLib::Swerve swerve(
-		{Pose2D(0, 120), Pose2D(-sqrt(3) / 2 * 120, -60), Pose2D(sqrt(3) / 2 * 120, -60)},
+		{P1, P2, P3},
 		{
 		[](const Pose2D& p) -> void{ p1->setVect(p); }, 
 		[](const Pose2D& p) -> void{ p2->setVect(p); },
@@ -50,7 +55,8 @@ int main(){
 	
 	while(1){
 		Brain.Screen.clearScreen();
-		swerve.drive(Pose2D(c1.Axis3.value(), -c1.Axis4.value(), c1.Axis1.value()));
+		Brain.Screen.setCursor(1, 1);
+		swerve.drive(Pose2D(-c1.Axis3.position() / 100.0, c1.Axis4.position() / 100.0, -c1.Axis1.position() / 100.0));
 
 		wait(67, vex::msec);
 		

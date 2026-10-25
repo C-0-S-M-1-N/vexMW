@@ -22,16 +22,18 @@ class EventQueue{
 public:
 	EventQueue() = default;
 
-	/*
+	/* *
 	 * @brief adds an event to the list
 	 * */
 	EventQueue addEvent(Event);
 	
-	/* @brief check if the queue is empty
+	/* *
+	 * @brief check if the queue is empty
 	 * */
 	bool isClear();
 
-	/* @brief clear all actions from the queue
+	/* * 
+	 * @brief clear all actions from the queue
 	 * */
 	void clear();
 	

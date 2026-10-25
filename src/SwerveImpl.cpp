@@ -1,7 +1,6 @@
 #include "SwerveImpl.hpp"
 #include "VexLib/Localizer.hpp"
 #include "VexLib/PID.hpp"
-#include "vex_brain.h"
 #include "vex_units.h"
 #include <algorithm>
 #include <cmath>
@@ -10,8 +9,8 @@ using VexLib::Pose2D;
 
 extern float VOLTAGE;
 
-DiffyPod::DiffyPod(int32_t P1, int32_t P2, const VexLib::PIDFCoefficients& pidc):
-		M1(P1), M2(P2),
+DiffyPod::DiffyPod(int32_t P1, int32_t P2, bool reverse, const VexLib::PIDFCoefficients& pidc):
+		M1(P1, reverse), M2(P2, reverse),
 		pid(pidc)
 {
 	yaw = 0;
@@ -44,8 +43,6 @@ float getMinimalAngle(float a, float b){
 	return ret;
 }
 
-extern vex::brain Brain;
-
 double clamp(double a, double t1, double t2){
 	if(a < t1) return t1;
 	if(a > t2) return t2;
@@ -55,9 +52,10 @@ double clamp(double a, double t1, double t2){
 void DiffyPod::setVect(const Pose2D& p){
 	double mod = VexLib::getDistance(Pose2D(), p);
 	double angle = std::atan2(p.y, p.x);
-	mod = p.x * std::cos(angle) + p.y * std::sin(angle);
 
-	if(std::abs(mod) > 0.1)
+	//mod = p.x * std::cos(angle) + p.y * std::sin(angle);
+
+	if(std::abs(mod) > 0.001)
 		angle = wrapPi(angle - yaw);
 	else angle = 0;
 
@@ -72,15 +70,9 @@ void DiffyPod::setVect(const Pose2D& p){
 	
 	//mod = 0;
 	
-	Brain.Screen.printAt(50, 50, "%.2lf %.2lf %.2lf", 
-					yaw * 180 / M_PI, 
-					std::atan2(p.y, p.x) * 180 / M_PI,
-					angle * 180 / M_PI);
-
-
 
 	double steer = pid.getPowerOutput(angle);
-	//mod *= std::max(std::cos(angle), 0.0);
+	mod *= std::max(std::cos(angle), 0.0);
 
 	//mod = clamp(mod, std::abs(steer) - 1, 1 - std::abs(steer));
 

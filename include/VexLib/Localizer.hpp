@@ -4,16 +4,23 @@
 #include "Units.hpp"
 namespace VexLib{
 
+/**
+ * @brief Pose2D struct that holds x, y and heading + the units they are sotred in
+ *
+ * */
+
 typedef struct Pose2D {
 	double x, y, h;
 	DistanceUnits distUnit = DistanceUnits::mm;
 	AngleUnits angleUnits = AngleUnits::rad;
+
 	Pose2D(double x = 0.0, 
            double y = 0.0, 
            double h = 0.0, 
            DistanceUnits distUnit = DistanceUnits::mm, 
            AngleUnits angleUnits = AngleUnits::rad)
         : x(x), y(y), h(h), distUnit(distUnit), angleUnits(angleUnits) {}
+
 	double getX(VexLib::DistanceUnits) const;
 	double getY(VexLib::DistanceUnits) const;
 	double getH(VexLib::AngleUnits) const;
@@ -25,9 +32,12 @@ Pose2D operator +(const Pose2D&, const Pose2D&);
 Pose2D operator *(const Pose2D&, double);
 Pose2D operator *(double, const Pose2D&);
 Pose2D operator /(const Pose2D&, double);
-double getDistance(const Pose2D& a, const Pose2D& b);
+double getDistance(const Pose2D& a, const Pose2D& b = Pose2D());
 
 
+/**
+ * @brief Localizer is used to estimate the position of a robot based on external sensors
+ * */
 class Localizer {
 protected:
 	Pose2D lastPose;
@@ -39,17 +49,22 @@ public:
 	virtual Pose2D getEstimatedVelocity(DistanceUnits = mm, TimeUnits = s, AngleUnits = rad);
 	virtual void update(){}
 	
-	/* 
-	 * @breif sets the estimated position to (x=0, y=0, h=0) and restarts tracking
+	/**
+	 * @brief sets the estimated position to (x=0, y=0, h=0) and restarts tracking
 	 * 
 	 * */
 	void resetTracking();
 	
-	/*
+	/**
 	 * @brief updates the current position to pose
 	 * */
 	void setPosition(const Pose2D& pose);
+
+	/**
+	 * @brief overload that calls update()
+	 * */
 	virtual void operator ()() = 0;
+
 	virtual ~Localizer();
 };
 

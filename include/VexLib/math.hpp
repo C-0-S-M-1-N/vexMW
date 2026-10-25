@@ -1,7 +1,7 @@
 #ifndef math_HPP
 #define math_HPP
 
-// a faster version of the trig functions that may come in handy for looptime optimisations on localizers or computer vision
+/// a faster version of the trig functions that may come in handy for looptime optimisations on localizers or computer vision
 
 // used only to keep consistency between number constants
 #include <cmath>
