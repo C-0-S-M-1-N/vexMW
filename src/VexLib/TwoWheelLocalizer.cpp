@@ -47,10 +47,13 @@ void TwoWheelLocalizer::update(){
 	Pose2D dpose;
 	
 	if(fabs(dH) <= VexLib::convertAngles(VexLib::AngleUnits::deg, CAU, 1) || 1){
+		//hotfix:
+		double midH = heading - dH / 2.0;
+		midH = heading;
 		// linear estimation for near linear movement
 		dpose = Pose2D(
-				fwd * cos(heading) - strf * sin(heading),
-				fwd * sin(heading) + strf * cos(heading),
+				fwd * cos(midH) - strf * sin(midH),
+				fwd * sin(midH) + strf * cos(midH),
 				dH,
 				CDU,
 				VexLib::AngleUnits::rad

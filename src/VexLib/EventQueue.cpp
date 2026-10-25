@@ -8,7 +8,7 @@ Event::Event(std::function<bool(void)> f){ func = std::move(f); }
 bool Event::run(){ if(func != nullptr) return func(); return true;}
 
 
-EventQueue EventQueue::addEvent(Event e){
+EventQueue& EventQueue::addEvent(Event e){
 	events.push(e);
 	return *this;
 }

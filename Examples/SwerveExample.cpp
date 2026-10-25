@@ -65,6 +65,11 @@ int swerveVexMain(){
 	vex::controller c(vex::primary);
 	while(1){
 		Brain.Screen.clearScreen();
+		
+		kinematics.drive(Pose2D(c.Axis3.position() / 100.0, -c.Axis4.position() / 100.0, c.Axis1.position() / 100.0));
+
+		for(int i = 0; i < 3; i ++){ //TODO: debug rendering, to lazy to add
+		}
 	}
 
 	return 0;

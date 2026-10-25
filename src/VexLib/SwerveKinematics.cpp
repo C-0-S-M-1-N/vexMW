@@ -22,8 +22,8 @@ void Swerve::drive(const Pose2D& dir){
 	for(size_t pod = 0; pod < podPositions.size(); pod ++){
 
 		Pose2D p;
-		p.x = dir.x + podPositions[pod].y * dir.h;
-		p.y = dir.y - podPositions[pod].x * dir.h;
+		p.x = dir.x - podPositions[pod].y * dir.h;
+		p.y = dir.y + podPositions[pod].x * dir.h;
 		
 		setPodParam[pod](p);
 		commands[pod] = p;

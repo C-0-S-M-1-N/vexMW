@@ -23,14 +23,19 @@ double VexLib::PIDFController::getPowerOutputWithVelo(double error, double veloc
 	double P = error * coeff.P;
 	double I = error * (getElapsedTime(TimeUnits::s) - lastTime) * coeff.I;
 	double D = velocity * coeff.D;
+	
+	
+	double ret = P + Isum + D + coeff.F * sgn(error);
+	
+	// clamping
+	bool clamp = true;
+	if(ret > maxSO) ret = maxSO;
+	else if(ret < minSO) ret = minSO;
+	else clamp = false;
 
-	double ret = P + D + Isum + I;
-	ret += coeff.F * sgn(ret);
-	if((ret > maxSO || ret < minSO) &&  // saturated controller
-		error * ret > 0 				// integral is pushing the system past its limits
-		){
-		ret -= I;
-	} else Isum += I;
+	if(!(clamp && error * ret > 0)) Isum += I;	 // unsaturared controller
+
+
 	lastReturn = ret;
 	lastTime = getElapsedTime(TimeUnits::s);
 

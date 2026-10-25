@@ -1,5 +1,5 @@
 #ifndef EVENT_QUEUE_HPP
-#define EVEN
+#define EVENT_QUEUE_HPP
 
 #include <functional>
 #include <queue>
@@ -25,7 +25,7 @@ public:
 	/* *
 	 * @brief adds an event to the list
 	 * */
-	EventQueue addEvent(Event);
+	EventQueue& addEvent(Event);
 	
 	/* *
 	 * @brief check if the queue is empty
