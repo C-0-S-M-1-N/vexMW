@@ -2,5 +2,5 @@
 /build
 compile_commands.json
 /.cache
-/test/.cache
+src/test/.cache
 /docs
