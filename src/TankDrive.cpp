@@ -1,3 +1,5 @@
+#ifndef TEST
+
 #include "VexLib/Localizer.hpp"
 #include "VexLib/Motion.hpp"
 #include "VexLib/VexLib.hpp"
@@ -18,10 +20,8 @@ void TankDrive::drive(float fwd, float rot){
     lpow /= div;
     rpow /= div;
 	
-#ifndef TEST
     left.spin(vex::directionType::fwd, lpow * 12, vex::voltageUnits::volt);
     right.spin(vex::directionType::fwd, rpow * 12, vex::voltageUnits::volt);
-#endif
 }
 
 void TankDrive::lockRotation(VexLib::AngleUnits u, float angle, bool lock){
@@ -122,3 +122,4 @@ double TankDrive::getClosestPointToPath(double step, int iter){
 		}
 		return (lo + hi) / 2.0;
 }
+#endif

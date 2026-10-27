@@ -34,7 +34,7 @@ test:
 		DEFINES="-DTEST" \
 		CXX="g++" \
 		CXX_FLAGS="-Os -Wall -DTEST" \
-		INC="-I./include" \
+		INC="-I./include/VexLib -I./include" \
 		LIBS="-lc -lm" \
 		BUILD="build/test" \
 		PLATFORM="TEST"

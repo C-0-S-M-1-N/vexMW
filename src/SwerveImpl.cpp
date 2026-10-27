@@ -1,7 +1,7 @@
+#ifndef TEST
 #include "SwerveImpl.hpp"
 #include "VexLib/Localizer.hpp"
 #include "VexLib/PID.hpp"
-#include "vex_units.h"
 #include <algorithm>
 #include <cmath>
 
@@ -34,20 +34,6 @@ void DiffyPod::update(){
 }
 
 static double wrapPi(double a){ return std::remainder(a, 2 * M_PI); }
-float getMinimalAngle(float a, float b){
-	float ret = wrapPi(b - a);
-	if(ret > M_PI)
-		ret -= 2 * M_PI;
-	if(ret < M_PI)
-		ret += 2 * M_PI;
-	return ret;
-}
-
-double clamp(double a, double t1, double t2){
-	if(a < t1) return t1;
-	if(a > t2) return t2;
-	return a;
-}
 
 void DiffyPod::setVect(const Pose2D& p){
 	double mod = VexLib::getDistance(Pose2D(), p);
@@ -88,3 +74,5 @@ void DiffyPod::setVect(const Pose2D& p){
 float DiffyPod::getAngle() const { return yaw; }
 
 float DiffyPod::getSpeed() const { return velo; }
+
+#endif

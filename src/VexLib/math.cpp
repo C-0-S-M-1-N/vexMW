@@ -1,13 +1,10 @@
 #include "VexLib/math.hpp"
 
-// used only to keep consistency between number constants
-#include <cmath>
-
 namespace VexLib{
 
 void normalize(double& x, double min, double max){
-	while(x < min) x += M_2_PI;
-	while(x > max) x -= M_2_PI;
+	while(x < min) x += 2 * M_PI;
+	while(x > max) x -= 2 * M_PI;
 }
 
 static const double pow10Array[] = {
@@ -16,7 +13,6 @@ static const double pow10Array[] = {
 };
 
 double pow10(int pow){
-	if(pow < -8 || pow > 8) return std::pow(10, pow); // compiler optimised
  	return pow10Array[pow + 8];
 }
 

@@ -17,7 +17,7 @@ MultiPointPath::MultiPointPath(const std::vector<Pose2D>& v):
 
 }
 
-std::function<Pose2D(double)> MultiPointPath::getPathFunction() {
+std::function<Pose2D(double)> MultiPointPath::getPathFunction() const {
     return [this](double t) -> Pose2D {
         if (points.empty()) return Pose2D(0, 0);
         if (points.size() == 1 || t <= 0.0) return points.front();
@@ -44,7 +44,7 @@ std::function<Pose2D(double)> MultiPointPath::getPathFunction() {
     };
 }
 
-std::function<Pose2D(double)> MultiPointPath::getDerivativePathFunction(){
+std::function<Pose2D(double)> MultiPointPath::getDerivativePathFunction() const {
 	return [](double t){return Pose2D(); };
 }
 
@@ -58,7 +58,7 @@ static unsigned int nChooseK(unsigned int n, unsigned int k){
 	return nChooseK(n-1, k-1) + nChooseK(n-1, k);
 }
 
-std::function<Pose2D(double)> BeziereCurve::getPathFunction(){
+std::function<Pose2D(double)> BeziereCurve::getPathFunction() const {
 	return [this](double t) -> Pose2D{
 		Pose2D ret = Pose2D(0, 0);
 		unsigned int pow = 0;
@@ -70,7 +70,7 @@ std::function<Pose2D(double)> BeziereCurve::getPathFunction(){
 	};
 }
 
-std::function<Pose2D(double)> BeziereCurve::getDerivativePathFunction(){
+std::function<Pose2D(double)> BeziereCurve::getDerivativePathFunction() const {
 	return [this](double t) -> Pose2D{
 		Pose2D ret = Pose2D();
 		int n = (int)points.size() - 1;   // degree

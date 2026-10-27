@@ -24,7 +24,6 @@ double VexLib::PIDFController::getPowerOutputWithVelo(double error, double veloc
 	double I = error * (getElapsedTime(TimeUnits::s) - lastTime) * coeff.I;
 	double D = velocity * coeff.D;
 	
-	
 	double ret = P + Isum + D + coeff.F * sgn(error);
 	
 	// clamping
@@ -34,7 +33,6 @@ double VexLib::PIDFController::getPowerOutputWithVelo(double error, double veloc
 	else clamp = false;
 
 	if(!(clamp && error * ret > 0)) Isum += I;	 // unsaturared controller
-
 
 	lastReturn = ret;
 	lastTime = getElapsedTime(TimeUnits::s);

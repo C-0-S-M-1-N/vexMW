@@ -19,13 +19,13 @@ public:
 	 * @brief get The analitic function f:[a, b] -> R^2
 	 * @return callable function f:[a, b] -> R^2
 	 * */
-	virtual std::function<Pose2D(double)> getPathFunction() = 0;
+	virtual std::function<Pose2D(double)> getPathFunction() const = 0;
 
 	/**
 	 * @brief get the analitic partial derivative of the function on both x and y
 	 * @return callable function df:[a, b] -> R^2
 	 */
-	virtual std::function<Pose2D(double)> getDerivativePathFunction() = 0;
+	virtual std::function<Pose2D(double)> getDerivativePathFunction() const = 0;
 };
 
 /**
@@ -37,8 +37,8 @@ class MultiPointPath : public Path{
 public:
 	MultiPointPath(const std::vector<Pose2D>&);
 
-	std::function<Pose2D(double)> getPathFunction();
-	std::function<Pose2D(double)> getDerivativePathFunction();
+	std::function<Pose2D(double)> getPathFunction() const;
+	std::function<Pose2D(double)> getDerivativePathFunction() const;
 };
 
 
@@ -51,8 +51,8 @@ public:
 	BeziereCurve(const std::vector<Pose2D>&);
 	
 	void modifyPoint(size_t idx, const Pose2D&);
-	std::function<Pose2D(double)> getPathFunction();
-	std::function<Pose2D(double)> getDerivativePathFunction();
+	std::function<Pose2D(double)> getPathFunction() const;
+	std::function<Pose2D(double)> getDerivativePathFunction() const;
 };
 
 }; // namespace VexLib

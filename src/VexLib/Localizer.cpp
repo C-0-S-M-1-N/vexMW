@@ -73,7 +73,9 @@ Pose2D operator /(const Pose2D& a, double f){
 }
 
 Pose2D Localizer::getEstimatedVelocity(DistanceUnits d, TimeUnits t, AngleUnits a){
-	return (getEstimatedPose() - lastPose) / (getElapsedTime(TimeUnits::s) - lastTime);
+	Pose2D velo =  (getEstimatedPose() - lastPose) / (getElapsedTime(t) - VexLib::convertTime(VexLib::s, t, lastTime));
+	velo.h /= getElapsedTime(t) - VexLib::convertTime(VexLib::s, t, lastTime);
+	return {velo.getX(d), velo.getY(d), velo.getH(a)};
 }
 
 void Localizer::setPosition(const Pose2D& pose){

@@ -2,7 +2,6 @@
  * This is an example file for using the Swerve kinematics class
  *
  * */
-
 #include "SwerveImpl.hpp"
 #include "VexLib/Localizer.hpp"
 #include "VexLib/SwerveKinematics.hpp"
@@ -23,6 +22,11 @@ using VexLib::Pose2D;
 vex::brain Brain;
 float VOLTAGE; // used by SwerveImpl to ajust power based on battery voltage
 
+double lt = Brain.Timer.systemHighResolution();
+double getElapsedTime(VexLib::TimeUnits t){
+	double dt = Brain.Timer.systemHighResolution() - lt;
+	return VexLib::convertTime(VexLib::us, t, dt);
+}
 
 int swerveVexMain(){
 
@@ -33,6 +37,7 @@ int swerveVexMain(){
 	PodPositions[1] = PodPositions[2] = PodPositions[0];
 	PodPositions[1].rotateBy(VexLib::deg, 120);
 	PodPositions[2].rotateBy(VexLib::deg, 60);
+
 	// we assumed that the wheels are arranged in an equilateral triangle
 
 	DiffyPod pods[] = {
@@ -68,7 +73,30 @@ int swerveVexMain(){
 		
 		kinematics.drive(Pose2D(c.Axis3.position() / 100.0, -c.Axis4.position() / 100.0, c.Axis1.position() / 100.0));
 
-		for(int i = 0; i < 3; i ++){ //TODO: debug rendering, to lazy to add
+		std::vector<Pose2D> debug = kinematics.getDebugCommands();
+
+		for(int i = 0; i < 3; i ++){
+			Pose2D spos = PodPositions[i];
+			spos = spos * 50 / 120.0;
+			spos.x += 480.0/2;
+			spos.y += 240.0/2;
+			Pose2D epos = debug[i];
+			epos = epos * 50;
+			epos = epos + spos;
+
+			// body
+			Brain.Screen.drawLine(spos.x, spos.y, epos.x, epos.y);
+
+			//arrows at 30deg
+			Pose2D arr = debug[i] * 10;
+			arr.rotateBy(VexLib::deg, 30);
+			arr = arr + epos;
+			Brain.Screen.drawLine(epos.x, epos.y, arr.x, arr.y);
+
+			arr = debug[i] * 10;
+			arr.rotateBy(VexLib::deg, -30);
+			arr = arr + epos;
+			Brain.Screen.drawLine(epos.x, epos.y, arr.x, arr.y);
 		}
 	}
 
